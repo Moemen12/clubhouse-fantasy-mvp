@@ -1,5 +1,5 @@
-import { FantasyDashboard } from "@/modules/fantasy/ui";
+import { ClubhouseEntry } from "@/adapters/next";
 
 export default function Home() {
-  return <FantasyDashboard />;
+  return <ClubhouseEntry />;
 }

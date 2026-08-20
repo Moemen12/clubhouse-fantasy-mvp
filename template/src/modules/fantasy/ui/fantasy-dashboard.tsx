@@ -131,7 +131,20 @@ function PitchSlot({
   );
 }
 
-export function FantasyDashboard() {
+type FantasyDashboardProps = Readonly<{
+  managerName?: string;
+}>;
+
+function getManagerInitials(name: string) {
+  return name
+    .split(" ")
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase())
+    .join("");
+}
+
+export function FantasyDashboard({ managerName = "Marcus Khan" }: FantasyDashboardProps) {
   const [team, setTeam] = useState<TeamState>(initialTeam);
   const [filter, setFilter] = useState<"ALL" | PlayerPosition>("ALL");
   const [search, setSearch] = useState("");
@@ -257,9 +270,9 @@ export function FantasyDashboard() {
             <ArrowUpRight size={15} />
           </div>
           <button className="profile-mini" type="button">
-            <span className="profile-avatar">MK</span>
+            <span className="profile-avatar">{getManagerInitials(managerName)}</span>
             <span className="profile-copy">
-              <strong>Marcus Khan</strong>
+              <strong>{managerName}</strong>
               <small>Manager</small>
             </span>
             <ChevronDown size={16} />

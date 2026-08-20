@@ -20,13 +20,14 @@ The first user is a casual football fan who wants a quick, understandable fantas
 | Users choose players and compete by score. | Assumed. | Use a small fictional player pool and a local leaderboard. |
 | The first release needs live football data. | Unknown. | Do not depend on live data for the first UI slice. |
 | The product is a full football-management simulator. | Unknown. | Keep the prototype focused on one fantasy journey. |
-| Authentication and multi-user persistence are required now. | Unknown. | Use a local demo state first; add a real persistence boundary later. |
+| Authentication is the first implementation feature. | Confirmed for this phase. | Use Supabase Auth when configured, with an explicit local preview fallback; persist fantasy data later. |
 | The score should be understandable. | Product requirement for this prototype. | Show a visible points breakdown for each selected player. |
 
 ## Version-one scope
 
 ### Build now
 
+- A clear authentication entrypoint with sign-in and account-creation states.
 - A responsive fantasy-football dashboard.
 - A small fictional player pool grouped by position.
 - A budget-aware team builder.
@@ -39,7 +40,7 @@ The first user is a casual football fan who wants a quick, understandable fantas
 
 ### Build later
 
-- Account creation and persistent teams.
+- Persistent fantasy teams linked to authenticated users.
 - Private leagues and invite links.
 - Transfers and multiple gameweeks.
 - Real sports-data integration.

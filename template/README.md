@@ -48,3 +48,17 @@ Use native `fetch` for HTTP unless an adapter has a clear reason to use another 
 ## Environment
 
 Copy `.env.example` to `.env.local`. Read environment variables through `src/shared/backend/env.ts`; do not access `process.env` throughout the application.
+
+## Clubhouse implementation
+
+This copy of the template is being used to build Clubhouse, a fantasy-football product prototype. The former generated example feature has been removed from `src/modules` and its example-only route, action, and composition wiring have also been removed.
+
+The current product features are organized as follows:
+
+```text
+src/modules/auth/        # Authentication rules, provider port, Supabase/preview adapter, and UI
+src/modules/fantasy/     # Fantasy-football domain rules, demo data, and dashboard UI
+src/shared/frontend/ui/  # shadcn-style shared primitives used by product features
+```
+
+Authentication is the first real product boundary. It uses Supabase when the public Supabase variables are configured and uses an explicitly labeled local preview mode otherwise. The auth feature is intentionally provider-independent at its UI and rules boundary.

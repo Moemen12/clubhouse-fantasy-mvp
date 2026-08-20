@@ -8,6 +8,11 @@
     "lineWidth": 100,
     "attributePosition": "auto"
   },
+  "css": {
+    "parser": {
+      "tailwindDirectives": true
+    }
+  },
   "files": {
     "ignoreUnknown": true,
     "includes": [

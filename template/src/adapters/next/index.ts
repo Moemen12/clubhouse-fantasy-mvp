@@ -1,1 +1,1 @@
-export { saveGreeting } from "./composition/example";
+export { ClubhouseEntry } from "./composition/clubhouse";
