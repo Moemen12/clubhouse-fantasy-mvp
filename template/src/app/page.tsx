@@ -1,4 +1,4 @@
-import { ClubhouseEntry } from "@/adapters/next";
+import { ClubhouseEntry } from "./clubhouse-entry";
 
 export default function Home() {
   return <ClubhouseEntry />;
