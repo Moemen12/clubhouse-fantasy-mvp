@@ -38,6 +38,9 @@ const initialForm: FormState = {
   displayName: "",
 };
 
+const brandMark =
+  "relative inline-flex h-[26px] w-[26px] shrink-0 rotate-[-8deg] items-center justify-center rounded-[8px_8px_8px_2px] border border-[var(--lime)] before:absolute before:left-[5px] before:top-[5px] before:h-[5px] before:w-[5px] before:rounded-full before:bg-[var(--lime)] before:content-[''] after:absolute after:bottom-[5px] after:right-[5px] after:h-[5px] after:w-[5px] after:rounded-full after:bg-[var(--lime)] after:content-['']";
+
 export function AuthEntry({ authClient, onAuthenticated }: AuthEntryProps) {
   const [intent, setIntent] = useState<AuthIntent>("sign-in");
   const [form, setForm] = useState<FormState>(initialForm);
@@ -93,54 +96,75 @@ export function AuthEntry({ authClient, onAuthenticated }: AuthEntryProps) {
   }
 
   return (
-    <main className="auth-screen">
-      <section className="auth-story" aria-labelledby="auth-story-title">
-        <div className="brand-lockup auth-brand">
-          <span className="brand-mark" aria-hidden="true">
-            <span />
+    <main className="grid min-h-screen grid-cols-[minmax(0,1.05fr)_minmax(420px,0.95fr)] bg-[radial-gradient(circle_at_13%_18%,rgba(215,255,79,0.08),transparent_26rem),radial-gradient(circle_at_85%_84%,rgba(145,184,255,0.08),transparent_22rem),var(--deep)] max-[900px]:block">
+      <section
+        className="relative flex min-h-screen flex-col justify-between overflow-hidden border-r border-[var(--line)] p-[clamp(28px,5vw,72px)] before:absolute before:bottom-[-19vw] before:right-[-16vw] before:h-[54vw] before:w-[54vw] before:rounded-full before:border before:border-[rgba(215,255,79,0.13)] before:shadow-[0_0_0_80px_rgba(215,255,79,0.025),0_0_0_160px_rgba(215,255,79,0.02)] before:content-[''] after:absolute after:bottom-[17%] after:right-[20%] after:h-[120px] after:w-0.5 after:rotate-[35deg] after:bg-gradient-to-b after:from-[var(--lime)] after:to-transparent after:opacity-35 after:content-[''] max-[900px]:min-h-0 max-[900px]:border-b max-[900px]:border-r-0 max-[900px]:px-6 max-[900px]:py-[30px] max-[900px]:pb-[46px] max-[520px]:px-[18px] max-[520px]:pb-[34px]"
+        aria-labelledby="auth-story-title"
+      >
+        <div className="relative z-[1] flex items-center gap-2.5">
+          <span className={brandMark} aria-hidden="true">
+            <span className="absolute left-[10px] top-[10px] h-[5px] w-[5px] rounded-full bg-[var(--lime)]" />
           </span>
           <span>
-            <span className="brand-name">clubhouse</span>
-            <span className="brand-caption">Fantasy football, reimagined.</span>
+            <span className="block text-[1.28rem] font-extrabold tracking-[-0.06em]">
+              clubhouse
+            </span>
+            <span className="mt-1.5 block text-[0.7rem] text-[var(--ink-faint)]">
+              Fantasy football, reimagined.
+            </span>
           </span>
         </div>
 
-        <div className="auth-story-copy">
+        <div className="relative z-[1] max-w-[620px] py-[8vh] max-[900px]:py-[70px_0_50px] max-[520px]:py-[54px_0_40px]">
           <Badge variant="success" className="w-fit">
             <Sparkles className="mr-1.5 h-3 w-3" />
             Season 01 · First light
           </Badge>
-          <p className="section-kicker mt-8">
-            <span className="kicker-line" /> Your match-day workspace
+          <p className="mt-8 flex items-center gap-2 text-[0.62rem] font-extrabold uppercase tracking-[0.14em] text-[var(--ink-faint)]">
+            <span className="inline-block h-px w-8 bg-[var(--lime)] opacity-80" /> Your match-day
+            workspace
           </p>
-          <h1 id="auth-story-title">Make your move count.</h1>
-          <p>
+          <h1
+            className="mt-[18px] max-w-[8ch] text-[clamp(4.3rem,8vw,8.8rem)] font-bold leading-[0.84] tracking-[-0.1em] max-[900px]:text-[clamp(4rem,15vw,7rem)] max-[520px]:text-[clamp(3.7rem,18vw,5.8rem)]"
+            id="auth-story-title"
+          >
+            Make your move count.
+          </h1>
+          <p className="mt-[30px] max-w-[460px] text-base leading-[1.75] text-[var(--ink-muted)]">
             Build a squad with a point of view, make one decision that matters, and see exactly why
             your instincts put you ahead.
           </p>
         </div>
 
-        <div className="auth-story-footer">
-          <div className="auth-story-stat">
-            <strong>01</strong>
-            <span>focused gameweek</span>
-          </div>
-          <div className="auth-story-stat">
-            <strong>2×</strong>
-            <span>captain&apos;s edge</span>
-          </div>
-          <div className="auth-story-stat">
-            <strong>∞</strong>
-            <span>ways to play</span>
-          </div>
+        <div className="relative z-[1] grid max-w-[520px] grid-cols-3 gap-5 max-[520px]:gap-3">
+          {[
+            ["01", "focused gameweek"],
+            ["2×", "captain's edge"],
+            ["∞", "ways to play"],
+          ].map(([value, label]) => (
+            <div
+              className="flex flex-col gap-1.5 border-t border-[var(--line-strong)] pt-3"
+              key={label}
+            >
+              <strong className="text-[1.25rem] font-medium tracking-[-0.05em] text-[var(--lime)]">
+                {value}
+              </strong>
+              <span className="text-[0.64rem] font-bold uppercase tracking-[0.1em] text-[var(--ink-faint)] max-[520px]:text-[0.55rem] max-[520px]:tracking-[0.06em]">
+                {label}
+              </span>
+            </div>
+          ))}
         </div>
       </section>
 
-      <section className="auth-form-wrap" aria-label="Account access">
-        <Card className="auth-card">
+      <section
+        className="flex min-h-screen flex-col items-center justify-center p-[34px] max-[900px]:min-h-0 max-[900px]:px-6 max-[900px]:py-11 max-[520px]:px-[18px] max-[520px]:py-[34px]"
+        aria-label="Account access"
+      >
+        <Card className="w-full max-w-[470px]">
           <CardHeader className="gap-3 pb-5">
             <div className="flex items-center justify-between gap-4">
-              <div className="auth-card-icon">
+              <div className="grid h-[38px] w-[38px] place-items-center rounded-xl border border-[rgba(215,255,79,0.22)] bg-[rgba(215,255,79,0.1)] text-[var(--lime)]">
                 <LockKeyhole className="h-4 w-4" />
               </div>
               <Badge variant={authClient.mode === "supabase" ? "success" : "secondary"}>
@@ -162,7 +186,6 @@ export function AuthEntry({ authClient, onAuthenticated }: AuthEntryProps) {
                 <TabsTrigger value="sign-in">Sign in</TabsTrigger>
                 <TabsTrigger value="sign-up">Create account</TabsTrigger>
               </TabsList>
-
               <TabsContent value="sign-in">
                 <AuthForm
                   intent="sign-in"
@@ -176,7 +199,6 @@ export function AuthEntry({ authClient, onAuthenticated }: AuthEntryProps) {
                   onSubmit={handleSubmit}
                 />
               </TabsContent>
-
               <TabsContent value="sign-up">
                 <AuthForm
                   intent="sign-up"
@@ -191,7 +213,6 @@ export function AuthEntry({ authClient, onAuthenticated }: AuthEntryProps) {
                 />
               </TabsContent>
             </Tabs>
-
             <div className="mt-6 flex items-center gap-3 text-xs text-[var(--ink-faint)]">
               <Separator className="flex-1" />
               <span>Your data stays yours</span>
@@ -199,7 +220,7 @@ export function AuthEntry({ authClient, onAuthenticated }: AuthEntryProps) {
             </div>
           </CardContent>
         </Card>
-        <p className="auth-form-note">
+        <p className="mt-[18px] w-full max-w-[470px] text-center text-[0.68rem] leading-[1.6] text-[var(--ink-faint)]">
           No pressure. Preview mode is available while the product is taking shape.
         </p>
       </section>
@@ -250,7 +271,6 @@ function AuthForm({
           ) : null}
         </div>
       ) : null}
-
       <div className="space-y-2">
         <Label htmlFor={`${intent}-email`}>Email address</Label>
         <Input
@@ -265,7 +285,6 @@ function AuthForm({
         />
         {errors.email ? <FieldError id={`${intent}-email-error`}>{errors.email}</FieldError> : null}
       </div>
-
       <div className="space-y-2">
         <div className="flex items-center justify-between gap-3">
           <Label htmlFor={`${intent}-password`}>Password</Label>
@@ -287,15 +306,17 @@ function AuthForm({
           <FieldError id={`${intent}-password-error`}>{errors.password}</FieldError>
         ) : null}
       </div>
-
-      {requestError ? <div className="auth-message auth-message-error">{requestError}</div> : null}
+      {requestError ? (
+        <div className="flex items-start gap-2 rounded-xl border border-[rgba(255,131,109,0.25)] bg-[rgba(255,131,109,0.08)] px-3 py-[11px] text-[0.76rem] leading-[1.5] text-[#ffb6a9]">
+          {requestError}
+        </div>
+      ) : null}
       {notice ? (
-        <div className="auth-message auth-message-success">
+        <div className="flex items-start gap-2 rounded-xl border border-[rgba(215,255,79,0.2)] bg-[rgba(215,255,79,0.08)] px-3 py-[11px] text-[0.76rem] leading-[1.5] text-[#d9ef9b]">
           <Check className="h-4 w-4 shrink-0" />
           <span>{notice}</span>
         </div>
       ) : null}
-
       <Button type="submit" className="w-full" disabled={isSubmitting}>
         {buttonLabel}
         {!isSubmitting ? <ArrowRight className="h-4 w-4" /> : null}

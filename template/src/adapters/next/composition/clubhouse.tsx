@@ -22,8 +22,14 @@ export function ClubhouseEntry() {
 
   if (user === undefined) {
     return (
-      <main className="auth-loading" aria-live="polite">
-        <span className="loading-orbit" aria-hidden="true" />
+      <main
+        className="grid min-h-screen place-content-center justify-items-center gap-[15px] bg-[var(--deep)] text-[0.75rem] text-[var(--ink-muted)]"
+        aria-live="polite"
+      >
+        <span
+          className="h-[26px] w-[26px] animate-spin rounded-full border-2 border-[rgba(215,255,79,0.17)] border-t-[var(--lime)] motion-reduce:animate-none"
+          aria-hidden="true"
+        />
         <p>Opening your clubhouse…</p>
       </main>
     );
