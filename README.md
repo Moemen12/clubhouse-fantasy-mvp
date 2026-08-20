@@ -1,76 +1,95 @@
-# Clubhouse
+# Next Architecture Kit
 
-**Clubhouse** is a focused fantasy-football MVP built around one simple experience:
+An npm-based, TypeScript-first starter for new Next.js App Router projects. It combines feature organization with practical Clean Architecture boundaries and is designed to become stricter without rewriting business logic.
 
-> Choose a valid squad, select a captain, submit the gameweek, receive an explainable score, and see the leaderboard update.
+## Quick start
 
-This project is an original prototype inspired by the fantasy-football genre. It does not use official league branding, licensed club assets, live sports data, or real-money competitions.
-
-## Current MVP
-
-The current version includes a polished dashboard with:
-
-- A dark editorial sports interface.
-- A fictional player pool with positions, prices, form, and demo performances.
-- Budget-aware squad selection.
-- Position validation for a five-player squad.
-- Captain selection with a 2× scoring multiplier.
-- A deterministic demo gameweek score.
-- Player-by-player score explanations.
-- A demo leaderboard that reorders after submission.
-- Responsive behavior for smaller screens.
-
-The prototype intentionally uses local demo data so the complete user journey can be demonstrated immediately. A future sports-data provider can be added behind a data-source boundary without changing the core scoring rules.
-
-## Run locally
-
-Use Node.js 22 LTS, 24 LTS, or 26+.
+Requirements: Node 22 LTS, Node 24 LTS, or Node 26+. Node 25 is not supported by the dependency-validation toolchain.
 
 ```bash
-npm ci
+git clone https://github.com/Moemen12/next-architecture-kit.git
+cd next-architecture-kit
+npm run setup
+npm run validate
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000).
+The setup command installs both the kit CLI and the standalone template dependencies, then activates the repository pre-commit hook. You only run one command; you do not need to install separately inside `template/`.
 
-## Validate the project
+To start a new project from the template, copy `template/` into a new repository and run `npm ci`. The generated project is intentionally a normal single Next.js repository and does not depend on this kit at runtime.
 
-```bash
-npm run validate
-```
+## Commands
 
-The validation command runs the runtime check, formatter, ESLint, TypeScript, architecture dependency checks, secret scan, and production build.
+| Command | Purpose |
+|---|---|
+| `npm run validate` | Format, lint, typecheck, enforce architecture, and build |
+| `npm run dev` | Start the template development server |
+| `npm run build` | Build the template for production |
+| `npm run kit:status` | Report governed project files |
+| `npm run kit:preview` | Preview the future strict-mode migration |
+| `npm run kit:create -- <name>` | Create a new project from the template |
+| `npm run secrets` | Scan staged contents for credentials |
 
-## Demo flow
-
-1. Open the dashboard.
-2. Review the preselected squad and remaining budget.
-3. Use the player pool to add or remove players.
-4. Click a player on the pitch to choose the captain.
-5. Click **Play gameweek**.
-6. Review the total score, player-by-player explanation, and leaderboard position.
+Read [`CONTRIBUTING.md`](./CONTRIBUTING.md) before adding features. It explains where frontend, backend, domain, application, ports, infrastructure, contracts, adapters, and shared code belong.
 
 ## Architecture
 
-The project follows the hybrid boundaries from [Next Architecture Kit](https://github.com/Moemen12/next-architecture-kit):
-
 ```text
 src/
-├── app/                         # Next.js delivery and page composition
-├── modules/fantasy/
-│   ├── domain/                  # Framework-free rules and scoring
-│   └── ui/                      # Fantasy dashboard and demo data
-├── adapters/next/               # Next-specific composition adapters
-└── shared/                      # Stable shared primitives
+├── app/                         # Next.js pages, route handlers, server actions
+├── adapters/next/               # Next.js composition and delivery adapters
+├── modules/<feature>/
+│   ├── ui/                      # Optional feature React presentation
+│   ├── contracts/               # Optional DTOs and runtime schemas
+│   ├── domain/                  # Optional framework-free business rules
+│   ├── application/             # Use cases and orchestration
+│   ├── ports/                   # Optional application-owned interfaces
+│   └── infrastructure/          # Optional concrete adapters
+├── shared/
+│   ├── kernel/                  # Small stable primitives
+│   ├── frontend/                # Reusable React primitives
+│   └── backend/                 # Reusable server-neutral utilities
+└── contracts/                   # Application-wide contracts when required
 ```
 
-The scoring rules live in `src/modules/fantasy/domain/`. The dashboard is responsible for presentation and local interaction state. The demo data is kept separate from the rules so a future persisted or external data source can replace it.
+The dependency direction is inward:
 
-## Product thinking
+```text
+Next delivery → composition → application → domain
+                              ↓
+                             ports ← infrastructure
+```
 
-The product brief is in [`PRODUCT_BRIEF.md`](./PRODUCT_BRIEF.md). It records the target user, core MVP journey, assumptions, scope, business rules, and acceptance criteria before implementation.
+Domain and application code must not import Next.js, React presentation, database clients, or vendor SDKs. Features expose public `index` files; private implementation paths are not valid cross-feature APIs.
 
-The current implementation deliberately does **not** include authentication, persistent storage, private leagues, transfers, live data integration, notifications, or a complete football-management simulator. Those are future decisions, not hidden requirements.
+## Tooling policy
+
+The kit uses Next.js 16, React 19, TypeScript 6, ESLint 9 flat config, Biome formatting, Zod, dependency-cruiser, `eslint-plugin-boundaries`, and Secretlint. The pre-commit hook scans the exact staged contents before allowing a commit; GitHub Actions scans again in CI. Direct dependencies are pinned and installed with `npm ci`. Native `fetch` is the default HTTP mechanism; integrations such as databases, authentication, queues, and WebSockets belong behind infrastructure adapters.
+
+The CLI source is TypeScript. Tool configuration remains in the format officially supported by the tool, so `eslint.config.mjs` and `.dependency-cruiser.mjs` are intentional.
+
+## What is complete versus what remains
+
+| Area | Status | Notes |
+|---|---|---|
+| Next.js App Router template | Complete | Single-repository template with npm setup and production build |
+| Hybrid feature architecture | Complete | Flat feature UI, domain, application, ports, infrastructure, contracts, and shared areas are present |
+| Next.js delivery boundaries | Complete | Pages, Route Handlers, Server Actions, and Next composition adapters stay at the edge |
+| Dependency direction | Complete | ESLint boundaries and dependency-cruiser enforce the current rules |
+| Public feature entrypoints | Complete | Cross-layer access is routed through deliberate `index.ts` APIs |
+| TypeScript-first CLI | Complete initial version | `create`, `status`, and safe `upgrade --preview` commands are available |
+| One-command setup | Complete | `npm run setup` installs root and template dependencies and activates the hook |
+| Runtime validation | Complete | Supported Node runtime guard and full `npm run validate` gate |
+| Secret protection | Complete initial version | Secretlint pre-commit scanning plus GitHub Actions scanning |
+| Environment boundary | Complete initial version | Typed Zod-based access through the shared backend boundary |
+| Concise documentation | Complete initial version | README quick start plus [`CONTRIBUTING.md`](./CONTRIBUTING.md) implementation guide |
+| Strict Clean Architecture layout | Remaining | Final strict-mode folder map still needs to be formalized |
+| Automatic hybrid-to-clean migration | Remaining | File classification, import rewriting, and migration execution are not enabled yet |
+| Reversible migrations | Remaining | Migration history and safe downgrade operations still need implementation |
+| Unknown-file classification report | Partial | CLI preview describes the requirement; full manifest-driven reporting remains |
+| Optional integrations | Remaining | Database, authentication, queues, WebSockets, and provider adapters need separate integration modules |
+
+The kit is ready for new projects in hybrid mode. The remaining work is the migration product that upgrades an existing generated project into strict mode without losing or silently moving developer code.
 
 ## License
 
