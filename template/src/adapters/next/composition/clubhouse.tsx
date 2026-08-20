@@ -23,11 +23,11 @@ export function ClubhouseEntry() {
   if (user === undefined) {
     return (
       <main
-        className="grid min-h-screen place-content-center justify-items-center gap-[15px] bg-[var(--deep)] text-[0.75rem] text-[var(--ink-muted)]"
+        className="grid min-h-screen place-content-center justify-items-center gap-3.75 bg-(--deep) text-[0.75rem] text-(--ink-muted)"
         aria-live="polite"
       >
         <span
-          className="h-[26px] w-[26px] animate-spin rounded-full border-2 border-[rgba(215,255,79,0.17)] border-t-[var(--lime)] motion-reduce:animate-none"
+          className="h-6.5 w-6.5 animate-spin rounded-full border-2 border-[rgba(215,255,79,0.17)] border-t-(--lime) motion-reduce:animate-none"
           aria-hidden="true"
         />
         <p>Opening your clubhouse…</p>

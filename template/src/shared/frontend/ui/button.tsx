@@ -6,16 +6,16 @@ import type { VariantProps } from "class-variance-authority";
 import { cn } from "../cn";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-xl text-sm font-semibold transition-[transform,background-color,border-color,color,box-shadow] duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--lime)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--deep)] disabled:pointer-events-none disabled:opacity-50 active:scale-[0.98]",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-xl text-sm font-semibold transition-[transform,background-color,border-color,color,box-shadow] duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--lime) focus-visible:ring-offset-2 focus-visible:ring-offset-(--deep) disabled:pointer-events-none disabled:opacity-50 active:scale-[0.98]",
   {
     variants: {
       variant: {
         default:
-          "bg-[var(--lime)] text-[#101310] shadow-[0_10px_30px_rgba(215,255,79,0.12)] hover:bg-[#e5ff84]",
-        secondary: "bg-[var(--deep-raised)] text-[var(--ink)] hover:bg-[#273027]",
+          "bg-(--lime) text-[#101310] shadow-[0_10px_30px_rgba(215,255,79,0.12)] hover:bg-[#e5ff84]",
+        secondary: "bg-(--deep-raised) text-(--ink) hover:bg-[#273027]",
         outline:
-          "border border-[var(--line-strong)] bg-transparent text-[var(--ink)] hover:border-[var(--lime)] hover:text-[var(--lime)]",
-        ghost: "text-[var(--ink-muted)] hover:bg-[var(--deep-raised)] hover:text-[var(--ink)]",
+          "border border-(--line-strong) bg-transparent text-(--ink) hover:border-(--lime) hover:text-(--lime)",
+        ghost: "text-(--ink-muted) hover:bg-(--deep-raised) hover:text-(--ink)",
       },
       size: {
         default: "h-11 px-5",

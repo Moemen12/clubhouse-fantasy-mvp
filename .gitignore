@@ -13,3 +13,8 @@ reports/
 *.tsbuildinfo
 
 /dist
+
+# Agent skill installations are reproducible from skills-lock.json.
+.agents/
+.claude/
+agent/
