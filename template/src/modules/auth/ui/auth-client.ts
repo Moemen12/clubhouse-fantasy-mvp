@@ -1,6 +1,6 @@
 import { createBrowserClient } from "@supabase/ssr";
 
-import { clientEnv } from "@/shared/backend/env";
+import { clientEnv } from "@/shared/frontend";
 import type { AuthClient, AuthResult, AuthUser } from "../ports";
 
 const PREVIEW_USER_KEY = "clubhouse.preview-user";

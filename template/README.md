@@ -39,6 +39,8 @@ Do not create every folder automatically. Start with the smallest structure the 
 
 Next.js code belongs in `app` and `adapters/next`. Domain and application code must not import Next.js, React presentation, databases, or vendor SDKs. Other features use a feature’s public `index` entrypoint instead of private implementation files.
 
+Server-only doors are enforced automatically. Route Handlers and Server Actions import `server-only`, while public barrels such as `src/adapters/next/index.ts`, `src/shared/backend/index.ts`, and `src/modules/<feature>/infrastructure/index.ts` protect their internal implementations. ESLint requires consumers to use those barrels and prevents UI code from importing backend areas. Internal leaves do not repeat the marker when they can only be reached through a protected barrel. Run `npm run server-only:check` directly, or use `npm run validate`. Do not add `server-only` to portable domain, application, ports, contracts, or UI files.
+
 ## Add a feature
 
 Create a feature under `src/modules/<feature>` and add only the layers it needs. Keep business rules in `domain`, orchestration in `application`, external contracts in `ports`, concrete implementations in `infrastructure`, and UI in `ui`. Connect infrastructure to the application in `src/adapters/next/composition`.
@@ -48,17 +50,3 @@ Use native `fetch` for HTTP unless an adapter has a clear reason to use another 
 ## Environment
 
 Copy `.env.example` to `.env.local`. Read environment variables through `src/shared/backend/env.ts`; do not access `process.env` throughout the application.
-
-## Clubhouse implementation
-
-This copy of the template is being used to build Clubhouse, a fantasy-football product prototype. The former generated example feature has been removed from `src/modules` and its example-only route, action, and composition wiring have also been removed.
-
-The current product features are organized as follows:
-
-```text
-src/modules/auth/        # Authentication rules, provider port, Supabase/preview adapter, and UI
-src/modules/fantasy/     # Fantasy-football domain rules, demo data, and dashboard UI
-src/shared/frontend/ui/  # shadcn-style shared primitives used by product features
-```
-
-Authentication is the first real product boundary. It uses Supabase when the public Supabase variables are configured and uses an explicitly labeled local preview mode otherwise. The auth feature is intentionally provider-independent at its UI and rules boundary.
