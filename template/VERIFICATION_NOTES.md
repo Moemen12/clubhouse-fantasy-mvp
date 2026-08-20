@@ -45,3 +45,9 @@ Using non-sensitive demo values in preview mode successfully created a local bro
 ## Authenticated dashboard verification
 
 After preview sign-up, the dashboard displays `Alex Morgan` and the initials `AM` in the profile area, proving the auth result is passed into the existing fantasy product boundary. The browser console showed only React DevTools and HMR messages; no runtime errors appeared.
+
+## Tailwind-first stylesheet verification
+
+After replacing the oversized stylesheet, the authenticated dashboard still renders with the Clubhouse sports visual system: sidebar, match-day hero, insight cards, pitch, score panel, player pool, and leaderboard. The authenticated manager `Alex Morgan` remains visible. The browser console reports only the normal React DevTools and HMR messages, with no runtime or CSS evaluation errors.
+
+The new stylesheet is Tailwind-first and 800 lines shorter than the previous version. It retains only the custom selectors required by the existing dashboard and auth components; shadcn primitives continue to use Tailwind utility classes and the shared design tokens.
