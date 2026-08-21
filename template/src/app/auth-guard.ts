@@ -30,6 +30,18 @@ function applySessionState(
   Object.entries(cacheHeaders).forEach(([key, value]) => response.headers.set(key, value));
 }
 
+function getRedirectDestination(request: NextRequest, pathname: string, isAuthenticated: boolean) {
+  if (!isAuthenticated && isProtectedPath(pathname)) {
+    return new URL(ROUTES.AUTH.ROOT, request.url);
+  }
+
+  if (isAuthenticated && isPublicPath(pathname)) {
+    return new URL(ROUTES.DASHBOARD.ROOT, request.url);
+  }
+
+  return null;
+}
+
 export async function applyAuthGuard(request: NextRequest): Promise<NextResponse> {
   let pendingCookies: PendingCookie[] = [];
   let cacheHeaders: Record<string, string> = {};
@@ -50,15 +62,7 @@ export async function applyAuthGuard(request: NextRequest): Promise<NextResponse
   const { data } = await supabase.auth.getClaims();
   const isAuthenticated = Boolean(data?.claims?.sub);
   const pathname = request.nextUrl.pathname;
-  const isProtected = isProtectedPath(pathname);
-  const isPublic = isPublicPath(pathname);
-  const shouldRedirectToAuth = !isAuthenticated && isProtected;
-  const shouldRedirectToDashboard = isAuthenticated && isPublic;
-  const destination = shouldRedirectToAuth
-    ? new URL(ROUTES.AUTH.ROOT, request.url)
-    : shouldRedirectToDashboard
-      ? new URL(ROUTES.DASHBOARD.ROOT, request.url)
-      : null;
+  const destination = getRedirectDestination(request, pathname, isAuthenticated);
   const response = destination
     ? NextResponse.redirect(destination)
     : NextResponse.next({ request });

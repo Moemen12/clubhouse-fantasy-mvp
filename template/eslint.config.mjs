@@ -3,6 +3,7 @@ import nextVitals from "eslint-config-next/core-web-vitals";
 import nextTs from "eslint-config-next/typescript";
 import boundaries from "eslint-plugin-boundaries";
 import importX from "eslint-plugin-import-x";
+import sonarjs from "eslint-plugin-sonarjs";
 
 const sharedTypes = ["shared-kernel", "shared-frontend", "shared-backend"];
 const allLocalTypes = [
@@ -45,7 +46,7 @@ const eslintConfig = defineConfig([
   ...nextVitals,
   ...nextTs,
   {
-    plugins: { boundaries, "import-x": importX },
+    plugins: { boundaries, "import-x": importX, sonarjs },
     settings: {
       "boundaries/elements": elements,
       "boundaries/include": ["src/**/*", "tests/**/*"],
@@ -158,6 +159,7 @@ const eslintConfig = defineConfig([
         },
       ],
       "import-x/consistent-type-specifier-style": ["error", "prefer-top-level"],
+      "sonarjs/no-nested-conditional": "error",
       "import-x/no-duplicates": "error",
     },
   },

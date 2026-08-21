@@ -1,15 +1,24 @@
 "use client";
 
-import { useActionState, useEffect, useEffectEvent, useId } from "react";
+import { startTransition, useActionState, useEffect, useEffectEvent } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { ArrowRight, Check } from "lucide-react";
-import { useFormStatus } from "react-dom";
+import { useForm } from "react-hook-form";
 
-import type { AuthIntent } from "../domain/auth";
-import { initialAuthActionState, submitAuthForm } from "./auth-form-action";
+import { authInputSchema } from "../domain/auth";
+import type { AuthInput, AuthIntent } from "../domain/auth";
 import type { AuthClient, AuthUser } from "../ports";
-import { Button } from "@/shared/frontend/ui/button";
-import { Input } from "@/shared/frontend/ui/input";
-import { Label } from "@/shared/frontend/ui/label";
+import {
+  Button,
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+  Input,
+} from "@/shared/frontend/ui";
+import { initialAuthActionState, submitAuthForm } from "./auth-form-action";
 
 type AuthFormProps = Readonly<{
   authClient: AuthClient;
@@ -18,124 +27,154 @@ type AuthFormProps = Readonly<{
 }>;
 
 export function AuthForm({ authClient, intent, onAuthenticated }: AuthFormProps) {
-  const formId = useId();
-  const [state, formAction] = useActionState(
+  const isSignUp = intent === "sign-up";
+  const form = useForm<AuthInput>({
+    resolver: zodResolver(authInputSchema),
+    defaultValues: {
+      intent,
+      email: "",
+      password: "",
+      displayName: "",
+    },
+  });
+  const [state, formAction, isPending] = useActionState(
     (previousState: typeof initialAuthActionState, formData: FormData) =>
       submitAuthForm(authClient, intent, previousState, formData),
     initialAuthActionState,
   );
   const handleAuthenticated = useEffectEvent(onAuthenticated);
-  const isSignUp = intent === "sign-up";
-  const emailId = `${formId}-email`;
-  const passwordId = `${formId}-password`;
-  const displayNameId = `${formId}-display-name`;
-  const emailErrorId = `${emailId}-error`;
-  const passwordErrorId = `${passwordId}-error`;
-  const displayNameErrorId = `${displayNameId}-error`;
+  const applyServerErrors = useEffectEvent((fieldErrors: typeof state.fieldErrors) => {
+    Object.entries(fieldErrors).forEach(([fieldName, message]) => {
+      if (message && fieldName in form.getValues()) {
+        form.setError(fieldName as keyof AuthInput, {
+          type: "server",
+          message,
+        });
+      }
+    });
+  });
+
+  useEffect(() => {
+    applyServerErrors(state.fieldErrors);
+  }, [state.fieldErrors]);
 
   useEffect(() => {
     if (state.user) handleAuthenticated(state.user);
   }, [state.user]);
 
+  function handleSubmit(values: AuthInput) {
+    const formData = new FormData();
+    formData.set("intent", intent);
+    formData.set("email", values.email);
+    formData.set("password", values.password);
+
+    if (values.displayName) {
+      formData.set("displayName", values.displayName);
+    }
+
+    form.clearErrors();
+    startTransition(() => formAction(formData));
+  }
+
   return (
-    <form action={formAction} className="space-y-4" noValidate>
-      {isSignUp ? (
-        <div className="space-y-2">
-          <Label htmlFor={displayNameId}>Manager name</Label>
-          <Input
-            id={displayNameId}
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4" noValidate>
+        {isSignUp ? (
+          <FormField
+            control={form.control}
             name="displayName"
-            autoComplete="name"
-            placeholder="e.g. Marcus Khan"
-            aria-invalid={Boolean(state.fieldErrors.displayName)}
-            aria-describedby={state.fieldErrors.displayName ? displayNameErrorId : undefined}
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Manager name</FormLabel>
+                <FormControl>
+                  <Input {...field} autoComplete="name" placeholder="e.g. Marcus Khan" />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
           />
-          {state.fieldErrors.displayName ? (
-            <FieldError id={displayNameErrorId}>{state.fieldErrors.displayName}</FieldError>
-          ) : null}
-        </div>
-      ) : null}
+        ) : null}
 
-      <div className="space-y-2">
-        <Label htmlFor={emailId}>Email address</Label>
-        <Input
-          id={emailId}
+        <FormField
+          control={form.control}
           name="email"
-          type="email"
-          autoComplete="email"
-          placeholder="you@example.com"
-          aria-invalid={Boolean(state.fieldErrors.email)}
-          aria-describedby={state.fieldErrors.email ? emailErrorId : undefined}
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Email address</FormLabel>
+              <FormControl>
+                <Input {...field} type="email" autoComplete="email" placeholder="you@example.com" />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
         />
-        {state.fieldErrors.email ? (
-          <FieldError id={emailErrorId}>{state.fieldErrors.email}</FieldError>
-        ) : null}
-      </div>
 
-      <div className="space-y-2">
-        <div className="flex items-center justify-between gap-3">
-          <Label htmlFor={passwordId}>Password</Label>
-          {!isSignUp ? <span className="text-xs text-(--ink-faint)">8+ characters</span> : null}
-        </div>
-        <Input
-          id={passwordId}
+        <FormField
+          control={form.control}
           name="password"
-          type="password"
-          autoComplete={isSignUp ? "new-password" : "current-password"}
-          placeholder="••••••••"
-          aria-invalid={Boolean(state.fieldErrors.password)}
-          aria-describedby={state.fieldErrors.password ? passwordErrorId : undefined}
+          render={({ field }) => (
+            <FormItem>
+              <div className="flex items-center justify-between gap-3">
+                <FormLabel>Password</FormLabel>
+                {!isSignUp ? (
+                  <span className="text-xs text-(--ink-faint)">8+ characters</span>
+                ) : null}
+              </div>
+              <FormControl>
+                <Input
+                  {...field}
+                  type="password"
+                  autoComplete={isSignUp ? "new-password" : "current-password"}
+                  placeholder="••••••••"
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
         />
-        {state.fieldErrors.password ? (
-          <FieldError id={passwordErrorId}>{state.fieldErrors.password}</FieldError>
+
+        {state.status === "error" && state.message ? (
+          <div
+            className="flex items-start gap-2 rounded-xl border border-[rgba(255,131,109,0.25)] bg-[rgba(255,131,109,0.08)] px-3 py-2.75 text-[0.76rem] leading-[1.5] text-[#ffb6a9]"
+            role="alert"
+          >
+            {state.message}
+          </div>
         ) : null}
-      </div>
+        {state.status === "success" && state.message ? (
+          <output className="flex items-start gap-2 rounded-xl border border-[rgba(215,255,79,0.2)] bg-[rgba(215,255,79,0.08)] px-3 py-2.75 text-[0.76rem] leading-[1.5] text-[#d9ef9b]">
+            <Check className="h-4 w-4 shrink-0" aria-hidden="true" />
+            <span>{state.message}</span>
+          </output>
+        ) : null}
 
-      {state.message && state.status === "error" ? (
-        <div
-          className="flex items-start gap-2 rounded-xl border border-[rgba(255,131,109,0.25)] bg-[rgba(255,131,109,0.08)] px-3 py-2.75 text-[0.76rem] leading-[1.5] text-[#ffb6a9]"
-          role="alert"
-        >
-          {state.message}
-        </div>
-      ) : null}
-      {state.message && state.status === "success" ? (
-        <div
-          className="flex items-start gap-2 rounded-xl border border-[rgba(215,255,79,0.2)] bg-[rgba(215,255,79,0.08)] px-3 py-2.75 text-[0.76rem] leading-[1.5] text-[#d9ef9b]"
-          role="status"
-        >
-          <Check className="h-4 w-4 shrink-0" />
-          <span>{state.message}</span>
-        </div>
-      ) : null}
-
-      <SubmitButton intent={intent} />
-    </form>
+        <SubmitButton intent={intent} pending={isPending} />
+      </form>
+    </Form>
   );
 }
 
-function SubmitButton({ intent }: Readonly<{ intent: AuthIntent }>) {
-  const { pending } = useFormStatus();
-  const label = pending
-    ? intent === "sign-up"
-      ? "Creating account…"
-      : "Signing in…"
-    : intent === "sign-up"
-      ? "Create account"
-      : "Enter Clubhouse";
-
+function SubmitButton({ intent, pending }: Readonly<{ intent: AuthIntent; pending: boolean }>) {
   return (
     <Button type="submit" className="w-full" disabled={pending}>
-      {label}
+      {getSubmitLabel(intent, pending)}
       {!pending ? <ArrowRight className="h-4 w-4" /> : null}
     </Button>
   );
 }
 
-function FieldError({ id, children }: Readonly<{ id: string; children: string }>) {
-  return (
-    <p id={id} className="text-xs text-(--red)" role="alert">
-      {children}
-    </p>
-  );
+function getSubmitLabel(intent: AuthIntent, pending: boolean) {
+  if (pending) {
+    if (intent === "sign-up") {
+      return "Creating account…";
+    }
+
+    return "Signing in…";
+  }
+
+  if (intent === "sign-up") {
+    return "Create account";
+  }
+
+  return "Enter Clubhouse";
 }

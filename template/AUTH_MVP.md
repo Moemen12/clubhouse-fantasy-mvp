@@ -40,6 +40,7 @@ The UI and domain rules do not depend on Supabase. The provider is replaceable b
 ## Build now
 
 - Auth feature directory with domain validation, contracts, provider port, Supabase adapter, and UI.
+- React Hook Form with a shared shadcn-style Form primitive and Zod validation schema.
 - shadcn/ui primitives for button, badge, card, input, label, separator, and tabs.
 - Auth-only root entrypoint and dedicated `/dashboard` route.
 - Next.js Proxy session refresh and route redirects.
