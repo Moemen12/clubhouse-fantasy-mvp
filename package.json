@@ -24,7 +24,7 @@
   "packageManager": "npm@10.9.2",
   "devDependencies": {
     "@types/node": "26.2.0",
-    "typescript": "6.0.3",
-    "tsx": "4.20.5"
+    "tsx": "4.20.5",
+    "typescript": "6.0.3"
   }
 }

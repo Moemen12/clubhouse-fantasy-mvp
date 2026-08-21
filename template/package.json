@@ -40,6 +40,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "2.5.9",
+    "@saadeh/nextray": "^1.0.0",
     "@secretlint/secretlint-rule-preset-recommend": "13.0.4",
     "@types/node": "26.2.0",
     "@types/react": "19.2.18",
