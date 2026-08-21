@@ -18,10 +18,10 @@ Open Clubhouse
 
 The auth feature supports two modes:
 
-| Mode | Behavior |
-|---|---|
-| Supabase mode | When `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` exist, the form calls Supabase Auth for sign-in, sign-up, and session restoration. |
-| Preview mode | When Supabase is not configured, the visitor can continue as a local demo manager. This keeps the product demo usable without pretending that a real account was created. |
+| Mode          | Behavior                                                                                                                                                                  |
+| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Supabase mode | When `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` exist, the form calls Supabase Auth for sign-in, sign-up, and session restoration.             |
+| Preview mode  | When Supabase is not configured, the visitor can continue as a local demo manager. This keeps the product demo usable without pretending that a real account was created. |
 
 The UI and domain rules do not depend on Supabase. The provider is replaceable behind the auth feature boundary.
 

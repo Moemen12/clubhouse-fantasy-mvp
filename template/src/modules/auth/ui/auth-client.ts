@@ -91,8 +91,8 @@ function createPreviewClient(): AuthClient {
 
 function createSupabaseClient(): AuthClient {
   const supabase = createBrowserClient(
-    clientEnv.NEXT_PUBLIC_SUPABASE_URL as string,
-    clientEnv.NEXT_PUBLIC_SUPABASE_ANON_KEY as string,
+    clientEnv.NEXT_PUBLIC_SUPABASE_URL,
+    clientEnv.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY,
   );
 
   return {
@@ -133,7 +133,7 @@ function createSupabaseClient(): AuthClient {
 }
 
 export function createAuthClient(): AuthClient {
-  if (clientEnv.NEXT_PUBLIC_SUPABASE_URL && clientEnv.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+  if (clientEnv.NEXT_PUBLIC_SUPABASE_URL && clientEnv.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY) {
     return createSupabaseClient();
   }
   return createPreviewClient();
