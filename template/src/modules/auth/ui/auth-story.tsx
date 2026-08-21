@@ -1,5 +1,4 @@
 import { Sparkles } from "lucide-react";
-
 import { Badge } from "@/shared/frontend/ui/badge";
 
 const brandMark =

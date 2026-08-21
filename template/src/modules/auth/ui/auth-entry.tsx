@@ -1,8 +1,8 @@
 "use client";
 
+import type { ReactNode } from "react";
 import { useState } from "react";
 import { LockKeyhole } from "lucide-react";
-
 import type { AuthIntent } from "../domain/auth";
 import type { AuthClient, AuthUser } from "../ports";
 import {
@@ -16,14 +16,14 @@ import { Badge } from "@/shared/frontend/ui/badge";
 import { Separator } from "@/shared/frontend/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/shared/frontend/ui/tabs";
 import { AuthForm } from "./auth-form";
-import { AuthStory } from "./auth-story";
 
 type AuthEntryProps = Readonly<{
   authClient: AuthClient;
   onAuthenticated: (user: AuthUser) => void;
+  story?: ReactNode;
 }>;
 
-export function AuthEntry({ authClient, onAuthenticated }: AuthEntryProps) {
+export function AuthEntry({ authClient, onAuthenticated, story }: AuthEntryProps) {
   const [intent, setIntent] = useState<AuthIntent>("sign-in");
 
   function handleIntentChange(value: string) {
@@ -32,7 +32,8 @@ export function AuthEntry({ authClient, onAuthenticated }: AuthEntryProps) {
 
   return (
     <main className="grid min-h-screen grid-cols-[minmax(0,1.05fr)_minmax(420px,0.95fr)] bg-[radial-gradient(circle_at_13%_18%,rgba(215,255,79,0.08),transparent_26rem),radial-gradient(circle_at_85%_84%,rgba(145,184,255,0.08),transparent_22rem),var(--deep)] max-225:block">
-      <AuthStory />
+      {/* Renders the static Server Component passed via props */}
+      {story}
 
       <section
         className="flex min-h-screen flex-col items-center justify-center p-8.5 max-225:min-h-0 max-225:px-6 max-225:py-11 max-130:px-4.5 max-130:py-8.5"
