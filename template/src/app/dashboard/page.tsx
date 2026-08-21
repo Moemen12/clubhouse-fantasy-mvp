@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 
 import { FantasyDashboard } from "@/modules/fantasy/ui";
 import { createSupabaseServerClient } from "@/shared/backend";
+import { ROUTES } from "@/shared/kernel";
 import { DashboardClient } from "./dashboard-client";
 
 function getManagerName(email: string, metadata: Record<string, unknown> | null) {
@@ -32,12 +33,12 @@ export default async function DashboardPage() {
 
   const { data: claimsData } = await supabase.auth.getClaims();
   if (!claimsData?.claims?.sub) {
-    redirect("/");
+    redirect(ROUTES.AUTH.ROOT);
   }
 
   const { data: userData } = await supabase.auth.getUser();
   if (!userData.user?.email) {
-    redirect("/");
+    redirect(ROUTES.AUTH.ROOT);
   }
 
   return (

@@ -43,22 +43,18 @@ The UI and domain rules do not depend on Supabase. The provider is replaceable b
 - shadcn/ui primitives for button, badge, card, input, label, separator, and tabs.
 - Auth-only root entrypoint and dedicated `/dashboard` route.
 - Next.js Proxy session refresh and route redirects.
-- PKCE token-hash confirmation endpoint at `/auth/confirm`.
 - Sign-in and sign-up states.
 - Loading, error, success, and preview states.
 - Session restoration when Supabase is configured.
 - Demo continuation when Supabase is not configured.
-- Supabase PKCE confirmation flow with server-side cookie exchange.
+- Direct Supabase sign-up that returns an authenticated session immediately.
+- PKCE session storage and refresh without using the implicit flow.
 
 ## Supabase configuration
 
-For hosted Supabase projects with email confirmation enabled, update the sign-up email template to use the PKCE token hash and the implemented confirmation route:
+In the Supabase dashboard, open **Authentication → Providers → Email** and disable **Confirm email**. The application expects `signUp()` to return a session immediately; if Supabase returns no session, the form reports that configuration requirement instead of pretending the user is logged in.
 
-```html
-<a href="{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=email&next={{ .RedirectTo }}">Confirm email address</a>
-```
-
-Add the local and deployed `/auth/confirm` URLs to Supabase Auth Redirect URLs. The browser client explicitly uses `flowType: "pkce"`; it does not use the implicit flow.
+The browser and server clients explicitly use `flowType: "pkce"`. PKCE is used for the session flow, but this MVP does not send users through an email-confirmation route.
 
 ## Build later
 
@@ -66,7 +62,7 @@ Add the local and deployed `/auth/confirm` URLs to Supabase Auth Redirect URLs. 
 - OAuth providers.
 - Profile editing and account deletion.
 - Persistent fantasy squads linked to an authenticated user.
-- Production rate limiting, audit logs, and abuse monitoring.
+- Audit logs and abuse monitoring.
 
 ## Acceptance criteria
 

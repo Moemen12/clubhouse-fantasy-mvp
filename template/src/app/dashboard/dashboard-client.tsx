@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { createAuthClient } from "@/modules/auth";
 import type { AuthUser } from "@/modules/auth";
 import { FantasyDashboard } from "@/modules/fantasy/ui";
+import { ROUTES } from "@/shared/kernel";
 
 export function DashboardClient() {
   const router = useRouter();
@@ -18,7 +19,7 @@ export function DashboardClient() {
     authClient.getSession().then((session) => {
       if (!active) return;
       if (!session) {
-        router.replace("/");
+        router.replace(ROUTES.AUTH.ROOT);
         return;
       }
       setUser(session);

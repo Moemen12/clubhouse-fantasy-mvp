@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
 import { createAuthClient, AuthEntry } from "@/modules/auth";
+import { ROUTES } from "@/shared/kernel";
 
 type AuthClientContainerProps = Readonly<{
   children: ReactNode;
@@ -21,7 +22,7 @@ export function AuthClientContainer({ children }: AuthClientContainerProps) {
     authClient.getSession().then((session) => {
       if (!active) return;
       if (session) {
-        router.replace("/dashboard");
+        router.replace(ROUTES.DASHBOARD.ROOT);
         return;
       }
       setIsCheckingSession(false);
@@ -33,7 +34,7 @@ export function AuthClientContainer({ children }: AuthClientContainerProps) {
   }, [authClient, router]);
 
   function handleAuthenticated() {
-    router.replace("/dashboard");
+    router.replace(ROUTES.DASHBOARD.ROOT);
   }
 
   if (isCheckingSession) {

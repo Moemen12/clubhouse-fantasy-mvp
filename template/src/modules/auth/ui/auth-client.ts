@@ -129,15 +129,15 @@ function createSupabaseClient(): AuthClient {
         password: input.password,
         options: {
           data: { display_name: input.displayName },
-          emailRedirectTo:
-            typeof window === "undefined" ? undefined : `${window.location.origin}/dashboard`,
         },
       });
       return {
         user: data.session?.user ? toAuthUser(data.session.user) : null,
-        message:
-          data.user && !data.session ? "Check your email to confirm your account." : undefined,
-        error: error?.message,
+        error:
+          error?.message ??
+          (data.session
+            ? undefined
+            : "Supabase returned no session. Disable Confirm email in Supabase Auth settings for direct sign-in."),
       };
     },
     async signOut() {
