@@ -23,12 +23,16 @@ export const authInputSchema = z
 
 export type AuthIntent = "sign-in" | "sign-up";
 export type AuthInput = z.input<typeof authInputSchema>;
-
-export type AuthFieldErrors = Readonly<{
-  email?: string;
-  password?: string;
-  displayName?: string;
+export type AuthFieldName = "email" | "password" | "displayName";
+export type AuthFieldError = Readonly<{
+  type: "server";
+  message: string;
 }>;
+export type AuthFieldErrors = Readonly<Partial<Record<AuthFieldName, AuthFieldError>>>;
+
+function toFieldError(message?: string): AuthFieldError | undefined {
+  return message ? { type: "server", message } : undefined;
+}
 
 export function validateAuthInput(input: AuthInput): AuthFieldErrors {
   const result = authInputSchema.safeParse(input);
@@ -39,12 +43,12 @@ export function validateAuthInput(input: AuthInput): AuthFieldErrors {
 
   const fieldErrors = result.error.flatten().fieldErrors;
   return {
-    email: fieldErrors.email?.[0],
-    password: fieldErrors.password?.[0],
-    displayName: fieldErrors.displayName?.[0],
+    email: toFieldError(fieldErrors.email?.[0]),
+    password: toFieldError(fieldErrors.password?.[0]),
+    displayName: toFieldError(fieldErrors.displayName?.[0]),
   };
 }
 
 export function hasAuthFieldErrors(errors: AuthFieldErrors): boolean {
-  return Boolean(errors.email || errors.password || errors.displayName);
+  return Object.values(errors).some(Boolean);
 }

@@ -5,8 +5,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { ArrowRight, Check } from "lucide-react";
 import { useForm } from "react-hook-form";
 
-import { authInputSchema } from "../domain/auth";
-import type { AuthInput, AuthIntent } from "../domain/auth";
+import { authInputSchema } from "../domain";
+import type { AuthInput, AuthIntent } from "../domain";
 import type { AuthClient, AuthUser } from "../ports";
 import {
   Button,
@@ -28,8 +28,14 @@ type AuthFormProps = Readonly<{
 
 export function AuthForm({ authClient, intent, onAuthenticated }: AuthFormProps) {
   const isSignUp = intent === "sign-up";
+  const [state, formAction, isPending] = useActionState(
+    (previousState: typeof initialAuthActionState, formData: FormData) =>
+      submitAuthForm(authClient, intent, previousState, formData),
+    initialAuthActionState,
+  );
   const form = useForm<AuthInput>({
     resolver: zodResolver(authInputSchema),
+    errors: state.fieldErrors,
     defaultValues: {
       intent,
       email: "",
@@ -37,26 +43,7 @@ export function AuthForm({ authClient, intent, onAuthenticated }: AuthFormProps)
       displayName: "",
     },
   });
-  const [state, formAction, isPending] = useActionState(
-    (previousState: typeof initialAuthActionState, formData: FormData) =>
-      submitAuthForm(authClient, intent, previousState, formData),
-    initialAuthActionState,
-  );
   const handleAuthenticated = useEffectEvent(onAuthenticated);
-  const applyServerErrors = useEffectEvent((fieldErrors: typeof state.fieldErrors) => {
-    Object.entries(fieldErrors).forEach(([fieldName, message]) => {
-      if (message && fieldName in form.getValues()) {
-        form.setError(fieldName as keyof AuthInput, {
-          type: "server",
-          message,
-        });
-      }
-    });
-  });
-
-  useEffect(() => {
-    applyServerErrors(state.fieldErrors);
-  }, [state.fieldErrors]);
 
   useEffect(() => {
     if (state.user) handleAuthenticated(state.user);
@@ -72,7 +59,6 @@ export function AuthForm({ authClient, intent, onAuthenticated }: AuthFormProps)
       formData.set("displayName", values.displayName);
     }
 
-    form.clearErrors();
     startTransition(() => formAction(formData));
   }
 

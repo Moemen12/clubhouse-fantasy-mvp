@@ -1,5 +1,5 @@
-import { hasAuthFieldErrors, validateAuthInput } from "../domain/auth";
-import type { AuthFieldErrors, AuthIntent } from "../domain/auth";
+import { hasAuthFieldErrors, validateAuthInput } from "../domain";
+import type { AuthFieldErrors, AuthIntent } from "../domain";
 import type { AuthClient, AuthUser } from "../ports";
 
 export type AuthActionState = Readonly<{
