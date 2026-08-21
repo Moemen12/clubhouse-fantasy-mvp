@@ -90,9 +90,21 @@ function createPreviewClient(): AuthClient {
 }
 
 function createSupabaseClient(): AuthClient {
+  if (!clientEnv.NEXT_PUBLIC_SUPABASE_URL || !clientEnv.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY) {
+    return createPreviewClient();
+  }
+
   const supabase = createBrowserClient(
     clientEnv.NEXT_PUBLIC_SUPABASE_URL,
     clientEnv.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY,
+    {
+      auth: {
+        flowType: "pkce",
+        detectSessionInUrl: true,
+        autoRefreshToken: true,
+        persistSession: true,
+      },
+    },
   );
 
   return {
@@ -117,6 +129,8 @@ function createSupabaseClient(): AuthClient {
         password: input.password,
         options: {
           data: { display_name: input.displayName },
+          emailRedirectTo:
+            typeof window === "undefined" ? undefined : `${window.location.origin}/dashboard`,
         },
       });
       return {
@@ -133,8 +147,5 @@ function createSupabaseClient(): AuthClient {
 }
 
 export function createAuthClient(): AuthClient {
-  if (clientEnv.NEXT_PUBLIC_SUPABASE_URL && clientEnv.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY) {
-    return createSupabaseClient();
-  }
-  return createPreviewClient();
+  return clientEnv.supabaseConfigured ? createSupabaseClient() : createPreviewClient();
 }
