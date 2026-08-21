@@ -3,15 +3,6 @@ import { createBrowserClient } from "@supabase/ssr";
 import { clientEnv } from "@/shared/frontend";
 import type { AuthClient, AuthResult, AuthUser } from "../ports";
 
-const PREVIEW_USER_KEY = "clubhouse.preview-user";
-
-function createId() {
-  if (typeof crypto !== "undefined" && "randomUUID" in crypto) {
-    return crypto.randomUUID();
-  }
-  return `preview-${Date.now()}`;
-}
-
 function getDisplayName(email: string, metadata?: Record<string, unknown> | null) {
   const metadataName = metadata?.display_name;
   if (typeof metadataName === "string" && metadataName.trim()) {
@@ -35,117 +26,66 @@ function toAuthUser(user: {
   };
 }
 
-function createPreviewClient(): AuthClient {
-  const readUser = () => {
-    if (typeof window === "undefined") return null;
-    const value = window.localStorage.getItem(PREVIEW_USER_KEY);
-    if (!value) return null;
-    try {
-      return JSON.parse(value) as AuthUser;
-    } catch {
-      window.localStorage.removeItem(PREVIEW_USER_KEY);
-      return null;
-    }
-  };
+function createSupabaseClient() {
+  const { NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: publishableKey, NEXT_PUBLIC_SUPABASE_URL: url } =
+    clientEnv;
 
-  const saveUser = (user: AuthUser) => {
-    window.localStorage.setItem(PREVIEW_USER_KEY, JSON.stringify(user));
-  };
-
-  return {
-    mode: "preview",
-    async getSession() {
-      return readUser();
-    },
-    async signIn(input) {
-      const user: AuthUser = {
-        id: readUser()?.id ?? createId(),
-        email: input.email.trim(),
-        displayName: getDisplayName(input.email),
-      };
-      saveUser(user);
-      return {
-        user,
-        message: "Preview session ready. Connect Supabase when you want real accounts.",
-      };
-    },
-    async signUp(input) {
-      const user: AuthUser = {
-        id: readUser()?.id ?? createId(),
-        email: input.email.trim(),
-        displayName: input.displayName.trim(),
-      };
-      saveUser(user);
-      return {
-        user,
-        message: "Preview account created locally for this browser.",
-      };
-    },
-    async signOut() {
-      if (typeof window !== "undefined") {
-        window.localStorage.removeItem(PREVIEW_USER_KEY);
-      }
-    },
-  };
-}
-
-function createSupabaseClient(): AuthClient {
-  if (!clientEnv.NEXT_PUBLIC_SUPABASE_URL || !clientEnv.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY) {
-    return createPreviewClient();
+  if (!url || !publishableKey) {
+    throw new Error(
+      "Supabase is not configured. Set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY.",
+    );
   }
 
-  const supabase = createBrowserClient(
-    clientEnv.NEXT_PUBLIC_SUPABASE_URL,
-    clientEnv.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY,
-    {
-      auth: {
-        flowType: "pkce",
-        detectSessionInUrl: true,
-        autoRefreshToken: true,
-        persistSession: true,
-      },
+  return createBrowserClient(url, publishableKey, {
+    auth: {
+      flowType: "pkce",
+      detectSessionInUrl: true,
+      autoRefreshToken: true,
+      persistSession: true,
     },
-  );
-
-  return {
-    mode: "supabase",
-    async getSession() {
-      const { data } = await supabase.auth.getSession();
-      return data.session?.user ? toAuthUser(data.session.user) : null;
-    },
-    async signIn(input): Promise<AuthResult> {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email: input.email,
-        password: input.password,
-      });
-      return {
-        user: data.user ? toAuthUser(data.user) : null,
-        error: error?.message,
-      };
-    },
-    async signUp(input): Promise<AuthResult> {
-      const { data, error } = await supabase.auth.signUp({
-        email: input.email,
-        password: input.password,
-        options: {
-          data: { display_name: input.displayName },
-        },
-      });
-      return {
-        user: data.session?.user ? toAuthUser(data.session.user) : null,
-        error:
-          error?.message ??
-          (data.session
-            ? undefined
-            : "Supabase returned no session. Disable Confirm email in Supabase Auth settings for direct sign-in."),
-      };
-    },
-    async signOut() {
-      await supabase.auth.signOut();
-    },
-  };
+  });
 }
 
+const authClient: AuthClient = {
+  async signIn(input): Promise<AuthResult> {
+    const supabase = createSupabaseClient();
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email: input.email,
+      password: input.password,
+    });
+
+    return {
+      user: data.user ? toAuthUser(data.user) : null,
+      error: error?.message,
+    };
+  },
+
+  async signUp(input): Promise<AuthResult> {
+    const supabase = createSupabaseClient();
+    const { data, error } = await supabase.auth.signUp({
+      email: input.email,
+      password: input.password,
+      options: {
+        data: { display_name: input.displayName },
+      },
+    });
+
+    return {
+      user: data.session?.user ? toAuthUser(data.session.user) : null,
+      error:
+        error?.message ??
+        (data.session
+          ? undefined
+          : "Supabase returned no session. Disable Confirm email in Supabase Auth settings for direct sign-in."),
+    };
+  },
+
+  async signOut() {
+    const supabase = createSupabaseClient();
+    await supabase.auth.signOut();
+  },
+};
+
 export function createAuthClient(): AuthClient {
-  return clientEnv.supabaseConfigured ? createSupabaseClient() : createPreviewClient();
+  return authClient;
 }

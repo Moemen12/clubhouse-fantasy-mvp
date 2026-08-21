@@ -7,7 +7,7 @@ import { useForm } from "react-hook-form";
 
 import { authInputSchema } from "../domain";
 import type { AuthInput, AuthIntent } from "../domain";
-import type { AuthClient, AuthUser } from "../ports";
+import type { AuthClient } from "../ports";
 import {
   Button,
   Form,
@@ -23,7 +23,7 @@ import { initialAuthActionState, submitAuthForm } from "./auth-form-action";
 type AuthFormProps = Readonly<{
   authClient: AuthClient;
   intent: AuthIntent;
-  onAuthenticated: (user: AuthUser) => void;
+  onAuthenticated: () => void;
 }>;
 
 export function AuthForm({ authClient, intent, onAuthenticated }: AuthFormProps) {
@@ -46,7 +46,7 @@ export function AuthForm({ authClient, intent, onAuthenticated }: AuthFormProps)
   const handleAuthenticated = useEffectEvent(onAuthenticated);
 
   useEffect(() => {
-    if (state.user) handleAuthenticated(state.user);
+    if (state.user) handleAuthenticated();
   }, [state.user]);
 
   function handleSubmit(values: AuthInput) {

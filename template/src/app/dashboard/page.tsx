@@ -4,7 +4,6 @@ import { redirect } from "next/navigation";
 import { FantasyDashboard } from "@/modules/fantasy/ui";
 import { createSupabaseServerClient } from "@/shared/backend";
 import { ROUTES } from "@/shared/kernel";
-import { DashboardClient } from "./dashboard-client";
 
 function getManagerName(email: string, metadata: Record<string, unknown> | null) {
   const metadataName = metadata?.display_name;
@@ -26,10 +25,6 @@ export default async function DashboardPage() {
       }
     },
   });
-
-  if (!supabase) {
-    return <DashboardClient />;
-  }
 
   const { data: claimsData } = await supabase.auth.getClaims();
   if (!claimsData?.claims?.sub) {

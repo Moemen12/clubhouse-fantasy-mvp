@@ -4,22 +4,25 @@ import type { ReactNode } from "react";
 import { useState } from "react";
 import { LockKeyhole } from "lucide-react";
 import type { AuthIntent } from "../domain/auth";
-import type { AuthClient, AuthUser } from "../ports";
+import type { AuthClient } from "../ports";
 import {
+  Badge,
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/shared/frontend/ui/card";
-import { Badge } from "@/shared/frontend/ui/badge";
-import { Separator } from "@/shared/frontend/ui/separator";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/shared/frontend/ui/tabs";
+  Separator,
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/shared/frontend/ui";
 import { AuthForm } from "./auth-form";
 
 type AuthEntryProps = Readonly<{
   authClient: AuthClient;
-  onAuthenticated: (user: AuthUser) => void;
+  onAuthenticated: () => void;
   story?: ReactNode;
 }>;
 
@@ -32,7 +35,6 @@ export function AuthEntry({ authClient, onAuthenticated, story }: AuthEntryProps
 
   return (
     <main className="grid min-h-screen grid-cols-[minmax(0,1.05fr)_minmax(420px,0.95fr)] bg-[radial-gradient(circle_at_13%_18%,rgba(215,255,79,0.08),transparent_26rem),radial-gradient(circle_at_85%_84%,rgba(145,184,255,0.08),transparent_22rem),var(--deep)] max-225:block">
-      {/* Renders the static Server Component passed via props */}
       {story}
 
       <section
@@ -45,16 +47,12 @@ export function AuthEntry({ authClient, onAuthenticated, story }: AuthEntryProps
               <div className="grid h-9.5 w-9.5 place-items-center rounded-xl border border-[rgba(215,255,79,0.22)] bg-[rgba(215,255,79,0.1)] text-(--lime)">
                 <LockKeyhole className="h-4 w-4" />
               </div>
-              <Badge variant={authClient.mode === "supabase" ? "success" : "secondary"}>
-                {authClient.mode === "supabase" ? "Live accounts" : "Preview mode"}
-              </Badge>
+              <Badge variant="success">Live accounts</Badge>
             </div>
             <div>
               <CardTitle>Welcome to Clubhouse</CardTitle>
               <CardDescription className="mt-2">
-                {authClient.mode === "supabase"
-                  ? "Sign in to keep your squad, decisions, and results with you."
-                  : "Explore the product now. Connect Supabase later for real accounts."}
+                Sign in to keep your squad, decisions, and results with you.
               </CardDescription>
             </div>
           </CardHeader>
@@ -89,7 +87,7 @@ export function AuthEntry({ authClient, onAuthenticated, story }: AuthEntryProps
           </CardContent>
         </Card>
         <p className="mt-4.5 w-full max-w-117.5 text-center text-[0.68rem] leading-[1.6] text-(--ink-faint)">
-          No pressure. Preview mode is available while the product is taking shape.
+          Sign up and continue straight into your Clubhouse dashboard.
         </p>
       </section>
     </main>

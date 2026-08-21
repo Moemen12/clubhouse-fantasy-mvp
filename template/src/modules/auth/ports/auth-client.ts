@@ -1,5 +1,3 @@
-export type AuthMode = "preview" | "supabase";
-
 export type AuthUser = Readonly<{
   id: string;
   email: string;
@@ -13,8 +11,6 @@ export type AuthResult = Readonly<{
 }>;
 
 export interface AuthClient {
-  readonly mode: AuthMode;
-  getSession(): Promise<AuthUser | null>;
   signIn(input: Readonly<{ email: string; password: string }>): Promise<AuthResult>;
   signUp(
     input: Readonly<{ email: string; password: string; displayName: string }>,

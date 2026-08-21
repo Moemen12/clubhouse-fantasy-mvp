@@ -1,1 +1,1 @@
-export type { AuthClient, AuthMode, AuthResult, AuthUser } from "./auth-client";
+export type { AuthClient, AuthResult, AuthUser } from "./auth-client";

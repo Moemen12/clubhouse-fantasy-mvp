@@ -21,23 +21,20 @@ export type SupabaseCookieStore = Readonly<{
 }>;
 
 export function createSupabaseServerClient(cookieStore: SupabaseCookieStore) {
-  if (
-    !serverEnv.supabaseConfigured ||
-    !serverEnv.NEXT_PUBLIC_SUPABASE_URL ||
-    !serverEnv.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
-  ) {
-    return null;
+  const { NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: publishableKey, NEXT_PUBLIC_SUPABASE_URL: url } =
+    serverEnv;
+
+  if (!url || !publishableKey) {
+    throw new Error(
+      "Supabase is not configured. Set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY.",
+    );
   }
 
-  return createServerClient(
-    serverEnv.NEXT_PUBLIC_SUPABASE_URL,
-    serverEnv.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY,
-    {
-      auth: { flowType: "pkce" },
-      cookies: {
-        getAll: cookieStore.getAll,
-        setAll: cookieStore.setAll,
-      },
+  return createServerClient(url, publishableKey, {
+    auth: { flowType: "pkce" },
+    cookies: {
+      getAll: cookieStore.getAll,
+      setAll: cookieStore.setAll,
     },
-  );
+  });
 }
