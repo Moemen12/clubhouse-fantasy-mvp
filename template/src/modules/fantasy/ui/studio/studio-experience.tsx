@@ -486,8 +486,8 @@ function RevealStage({
   const score = calculateTeamScore(team, fantasyPlayers);
   return (
     <div className="relative isolate flex min-h-0 flex-1 flex-col items-center overflow-hidden px-5 py-3 md:px-10 md:py-5">
-      <div className="pointer-events-none absolute left-1/2 top-1/2 z-0 aspect-square w-[min(72vh,680px)] -translate-x-1/2 -translate-y-1/2 rounded-full border border-(--accent-border) shadow-[0_0_180px_var(--glow-lime)]" />
-      <div className="relative z-10 flex min-h-0 w-full max-w-5xl flex-1 items-center justify-center">
+      <div className="pointer-events-none absolute left-1/2 top-1/2 z-0 aspect-square w-[min(100%,54rem)] -translate-x-1/2 -translate-y-1/2 rounded-full border border-(--accent-border) shadow-[0_0_180px_var(--glow-lime)]" />
+      <div className="relative z-10 flex min-h-0 w-full max-w-[52rem] flex-1 items-center justify-center">
         <div className="flex max-h-full w-full flex-col items-center justify-center py-2">
           <div className="flex items-center gap-2 text-[0.6rem] font-extrabold uppercase tracking-[0.18em] text-(--lime)">
             <Sparkles size={14} /> Decision locked / read received
@@ -498,7 +498,7 @@ function RevealStage({
           <span className="mt-3 text-[0.62rem] font-extrabold uppercase tracking-[0.2em] text-(--ink-faint)">
             projected points
           </span>
-          <div className="relative z-10 mt-4 grid w-full max-w-3xl min-w-0 grid-cols-3 gap-2 md:mt-5">
+          <div className="relative z-10 mt-4 grid w-full max-w-none min-w-0 grid-cols-3 gap-2 md:mt-5">
             <Metric
               label="Captain"
               tone="orange"
