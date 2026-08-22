@@ -3,7 +3,6 @@
 import type { ReactNode } from "react";
 import { useState } from "react";
 import { LockKeyhole } from "lucide-react";
-import type { AuthFormAction } from "../contracts";
 import type { AuthIntent } from "../domain/auth";
 import {
   Badge,
@@ -22,10 +21,9 @@ import { AuthForm } from "./auth-form";
 
 type AuthEntryProps = Readonly<{
   children?: ReactNode;
-  authAction: AuthFormAction;
 }>;
 
-export function AuthEntry({ children, authAction }: AuthEntryProps) {
+export function AuthEntry({ children }: AuthEntryProps) {
   const [intent, setIntent] = useState<AuthIntent>("sign-in");
 
   function handleIntentChange(value: string) {
@@ -62,10 +60,10 @@ export function AuthEntry({ children, authAction }: AuthEntryProps) {
                 <TabsTrigger value="sign-up">Create account</TabsTrigger>
               </TabsList>
               <TabsContent value="sign-in">
-                <AuthForm key="sign-in" intent="sign-in" authAction={authAction} />
+                <AuthForm key="sign-in" intent="sign-in" />
               </TabsContent>
               <TabsContent value="sign-up">
-                <AuthForm key="sign-up" intent="sign-up" authAction={authAction} />
+                <AuthForm key="sign-up" intent="sign-up" />
               </TabsContent>
             </Tabs>
             <div className="mt-6 flex items-center gap-3 text-xs text-(--ink-faint)">

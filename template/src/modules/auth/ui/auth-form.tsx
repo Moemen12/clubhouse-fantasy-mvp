@@ -2,13 +2,14 @@
 
 import { startTransition, useActionState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
+
+import { submitAuthFormAction } from "@/app/auth/actions";
 import { ArrowRight, Check } from "lucide-react";
 import { useForm } from "react-hook-form";
 
 import { authInputSchema } from "../domain";
 import type { AuthInput, AuthIntent } from "../domain";
 import { initialAuthActionState } from "../contracts";
-import type { AuthFormAction } from "../contracts";
 import {
   Button,
   Form,
@@ -21,12 +22,14 @@ import {
 } from "@/shared/frontend/ui";
 type AuthFormProps = Readonly<{
   intent: AuthIntent;
-  authAction: AuthFormAction;
 }>;
 
-export function AuthForm({ intent, authAction }: AuthFormProps) {
+export function AuthForm({ intent }: AuthFormProps) {
   const isSignUp = intent === "sign-up";
-  const [state, formAction, isPending] = useActionState(authAction, initialAuthActionState);
+  const [state, formAction, isPending] = useActionState(
+    submitAuthFormAction,
+    initialAuthActionState,
+  );
   const form = useForm<AuthInput>({
     resolver: zodResolver(authInputSchema),
     errors: state.fieldErrors,
