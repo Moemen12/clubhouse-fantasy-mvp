@@ -23,6 +23,12 @@ export function formatEnvValidationError(error: unknown): string {
   if (error instanceof z.ZodError) {
     return error.issues.map(({ message, path }) => `${path.join(".")}: ${message}`).join("\n");
   }
-
-  return error instanceof Error ? error.message : String(error);
+  if (error instanceof Error) {
+    return error.message;
+  }
+  try {
+    return JSON.stringify(error) ?? "Unknown error";
+  } catch {
+    return "Unknown error";
+  }
 }
