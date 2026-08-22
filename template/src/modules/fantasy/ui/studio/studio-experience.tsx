@@ -118,17 +118,17 @@ function StudioPitch({
   const pitchRows = getPitchRows(selectedPlayers, formation);
 
   return (
-    <div className="relative h-full min-h-[260px] overflow-hidden rounded-[30px] border border-white/35 bg-(--pitch-surface) shadow-[0_30px_90px_rgba(0,0,0,0.24)] md:min-h-[330px]">
-      <div className="pointer-events-none absolute inset-[6%] rounded-[18px] border border-white/60" />
-      <div className="pointer-events-none absolute bottom-[6%] left-1/2 top-[6%] border-l border-white/35" />
-      <div className="pointer-events-none absolute left-[6%] right-[6%] top-1/2 border-t border-white/50" />
-      <div className="pointer-events-none absolute left-1/2 top-1/2 h-24 w-24 -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/55 md:h-28 md:w-28" />
-      <div className="pointer-events-none absolute bottom-[6%] left-[25%] right-[25%] h-[23%] rounded-t-xl border border-b-0 border-white/55" />
-      <div className="pointer-events-none absolute bottom-[6%] left-[35%] right-[35%] h-[10%] rounded-t-md border border-b-0 border-white/45" />
-      <span className="absolute left-5 top-5 text-[0.62rem] font-extrabold uppercase tracking-[0.17em] text-white/75">
+    <div className="relative h-full min-h-[260px] overflow-hidden rounded-[30px] border border-(--pitch-marking) bg-(--pitch-surface) shadow-[0_30px_90px_rgba(0,0,0,0.24)] md:min-h-[330px]">
+      <div className="pointer-events-none absolute inset-[6%] rounded-[18px] border border-(--pitch-marking-strong)" />
+      <div className="pointer-events-none absolute bottom-[6%] left-1/2 top-[6%] border-l border-(--pitch-marking)" />
+      <div className="pointer-events-none absolute left-[6%] right-[6%] top-1/2 border-t border-(--pitch-marking)" />
+      <div className="pointer-events-none absolute left-1/2 top-1/2 h-24 w-24 -translate-x-1/2 -translate-y-1/2 rounded-full border border-(--pitch-marking) md:h-28 md:w-28" />
+      <div className="pointer-events-none absolute bottom-[6%] left-[25%] right-[25%] h-[23%] rounded-t-xl border border-b-0 border-(--pitch-marking)" />
+      <div className="pointer-events-none absolute bottom-[6%] left-[35%] right-[35%] h-[10%] rounded-t-md border border-b-0 border-(--pitch-marking)" />
+      <span className="absolute left-5 top-5 text-[0.62rem] font-extrabold uppercase tracking-[0.17em] text-(--pitch-label)">
         Stadium / live read
       </span>
-      <span className="absolute right-5 top-5 font-mono text-[0.62rem] font-bold text-white/75">
+      <span className="absolute right-5 top-5 font-mono text-[0.62rem] font-bold text-(--pitch-label)">
         {formation.label.toUpperCase()} / LIVE
       </span>
       <div className="relative z-1 flex h-full flex-col justify-around px-[7%] py-[8%]">
@@ -626,9 +626,15 @@ function RevealStage({
   );
 }
 
-type StudioExperienceProps = Readonly<{ managerName?: string }>;
+type StudioExperienceProps = Readonly<{
+  managerName?: string;
+  logoutAction: () => Promise<never>;
+}>;
 
-export function StudioExperience({ managerName = "Marcus Khan" }: StudioExperienceProps) {
+export function StudioExperience({
+  managerName = "Marcus Khan",
+  logoutAction,
+}: StudioExperienceProps) {
   const studioSound = useStudioSound();
   const [stage, setStage] = useState<StudioStage>("entry");
   const [selectedIds, setSelectedIds] = useState(initialSelectedIds);
@@ -730,6 +736,7 @@ export function StudioExperience({ managerName = "Marcus Khan" }: StudioExperien
   return (
     <main className="flex h-dvh min-h-0 flex-col overflow-hidden bg-[radial-gradient(circle_at_78%_0%,var(--glow-lime),transparent_24rem),radial-gradient(circle_at_12%_80%,var(--glow-blue),transparent_25rem),var(--deep)] text-(--ink)">
       <StudioHeader
+        logoutAction={logoutAction}
         onExit={exitStudio}
         onToggleSound={studioSound.toggle}
         soundEnabled={studioSound.enabled}

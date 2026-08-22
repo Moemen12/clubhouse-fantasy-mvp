@@ -107,6 +107,7 @@ const eslintConfig = defineConfig([
               from: { element: { type: "next-delivery" } },
               allow: allowTypes([
                 "next-composition",
+                "next-delivery",
                 "ui",
                 "application",
                 "ports",

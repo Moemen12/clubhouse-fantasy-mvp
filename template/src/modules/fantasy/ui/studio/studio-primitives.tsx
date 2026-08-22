@@ -2,7 +2,16 @@
 
 import type { ReactNode } from "react";
 import Link from "next/link";
-import { ArrowLeft, ArrowRight, Check, Crown, DoorOpen, Volume2, VolumeX } from "lucide-react";
+import {
+  ArrowLeft,
+  ArrowRight,
+  Check,
+  Crown,
+  DoorOpen,
+  LogOut,
+  Volume2,
+  VolumeX,
+} from "lucide-react";
 
 import { cn, ThemeToggle } from "@/shared/frontend";
 import { Button } from "@/shared/frontend/ui";
@@ -30,11 +39,13 @@ export function StudioHeader({
   onExit,
   soundEnabled,
   onToggleSound,
+  logoutAction,
 }: {
   stage: StudioStage;
   onExit: () => void;
   soundEnabled: boolean;
   onToggleSound: () => void;
+  logoutAction: () => Promise<never>;
 }) {
   const activeIndex = stage === "entry" ? -1 : stageSteps.findIndex((step) => step.id === stage);
 
@@ -89,6 +100,18 @@ export function StudioHeader({
           {soundEnabled ? <Volume2 size={15} /> : <VolumeX size={15} />}
         </Button>
         <ThemeToggle className="h-10 w-10" />
+        <form action={logoutAction}>
+          <Button
+            aria-label="Log out of Clubhouse"
+            className="gap-2 rounded-full px-3 text-[0.82rem] text-(--red) hover:bg-(--danger-bg) hover:text-(--red)"
+            size="sm"
+            type="submit"
+            variant="ghost"
+          >
+            <LogOut size={14} />
+            <span className="hidden sm:inline">Log out</span>
+          </Button>
+        </form>
         {stage !== "entry" && (
           <Button
             className="gap-2 rounded-full px-3 text-[0.82rem]"

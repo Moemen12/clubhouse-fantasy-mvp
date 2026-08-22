@@ -31,3 +31,16 @@ export async function submitAuthFormAction(
 
   return state;
 }
+
+export async function signOutAction(): Promise<never> {
+  const cookieStore = await cookies();
+  const authClient = createNextAuthClient({
+    getAll: () => cookieStore.getAll(),
+    setAll: (cookiesToSet) => {
+      cookiesToSet.forEach(({ name, value, options }) => cookieStore.set(name, value, options));
+    },
+  });
+
+  await authClient.signOut();
+  redirect(ROUTES.AUTH.ROOT);
+}

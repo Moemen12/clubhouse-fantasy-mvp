@@ -54,7 +54,9 @@
   --pitch-surface: linear-gradient(105deg, rgba(65, 112, 84, 0.58), rgba(38, 76, 66, 0.84));
   --pitch-line: rgba(185, 220, 124, 0.16);
   --pitch-border: rgba(185, 220, 124, 0.27);
-  --pitch-label: rgba(185, 220, 124, 0.7);
+  --pitch-marking: rgba(244, 249, 245, 0.72);
+  --pitch-marking-strong: rgba(244, 249, 245, 0.86);
+  --pitch-label: rgba(244, 249, 245, 0.78);
   --avatar-border: rgba(10, 14, 10, 0.45);
   --avatar-ink: #1b2310;
   --avatar-shadow: 0 7px 18px rgba(0, 0, 0, 0.22);
@@ -130,7 +132,9 @@
   --pitch-surface: linear-gradient(105deg, #b4cfba, #94b6a2);
   --pitch-line: rgba(44, 79, 55, 0.28);
   --pitch-border: rgba(44, 79, 55, 0.4);
-  --pitch-label: rgba(38, 72, 49, 0.78);
+  --pitch-marking: rgba(20, 31, 28, 0.72);
+  --pitch-marking-strong: rgba(20, 31, 28, 0.88);
+  --pitch-label: rgba(20, 31, 28, 0.78);
   --avatar-border: rgba(33, 49, 45, 0.2);
   --avatar-ink: #193526;
   --avatar-shadow: 0 7px 18px rgba(33, 49, 45, 0.15);

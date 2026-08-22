@@ -1,6 +1,7 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
+import { signOutAction } from "@/app/auth/actions";
 import { FantasyDashboard } from "@/modules/fantasy/ui";
 import { createSupabaseServerClient } from "@/shared/backend";
 import { ROUTES } from "@/shared/kernel";
@@ -38,6 +39,7 @@ export default async function DashboardPage() {
 
   return (
     <FantasyDashboard
+      logoutAction={signOutAction}
       managerName={getManagerName(userData.user.email, userData.user.user_metadata)}
     />
   );
