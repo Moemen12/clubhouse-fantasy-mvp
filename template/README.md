@@ -52,7 +52,7 @@ Deep feature imports and arbitrary app-to-feature-UI imports fail through ESLint
 
 The authentication form is a Client Component because it uses React Hook Form and `useActionState`. It imports the real Server Action directly. The Server Action validates the shared Zod contract, calls the server-side Supabase adapter, writes cookie-backed sessions, and redirects successful users to `/dashboard`.
 
-Proxy refreshes incoming Supabase sessions and owns route access decisions. The dashboard page performs a server-side claims and user check before rendering. No preview authentication or local-storage fallback exists.
+Proxy refreshes incoming Supabase sessions and owns route access decisions. The dashboard page performs a server-side claims and user check before rendering. No preview authentication or local-storage authentication fallback exists. A visible theme switch lets users choose light or dark mode, and its presentation preference is persisted separately from the Supabase auth session.
 
 ## Environment
 

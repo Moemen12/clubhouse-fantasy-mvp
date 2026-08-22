@@ -19,7 +19,7 @@ import {
   Zap,
 } from "lucide-react";
 
-import { cn } from "@/shared/frontend/cn";
+import { cn, ThemeToggle } from "@/shared/frontend";
 import {
   BUDGET_LIMIT,
   SQUAD_LIMIT,
@@ -337,6 +337,7 @@ export function FantasyDashboard({ managerName = "Marcus Khan" }: FantasyDashboa
             <strong className="font-semibold text-(--ink)">Dashboard</strong>
           </div>
           <div className="flex items-center gap-3">
+            <ThemeToggle className="h-8.5 w-8.5" />
             <span className="inline-flex items-center gap-2 rounded-full border border-(--accent-border) bg-(--accent-soft) px-2.75 py-2 text-[0.66rem] font-semibold text-(--success-text) max-175:px-2 max-175:py-1.75 max-175:text-[0.59rem]">
               <span className="h-1.5 w-1.5 rounded-full bg-(--lime) shadow-[0_0_0_4px_var(--accent-soft)]" />{" "}
               Gameweek 04 is open

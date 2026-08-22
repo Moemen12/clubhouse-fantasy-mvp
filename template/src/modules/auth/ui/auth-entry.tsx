@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { LockKeyhole } from "lucide-react";
 
+import { ThemeToggle } from "@/shared/frontend";
 import {
   Badge,
   Card,
@@ -22,8 +23,9 @@ type AuthEntryProps = Readonly<{
 
 export function AuthEntry({ children }: AuthEntryProps) {
   return (
-    <main className="grid min-h-screen grid-cols-[minmax(0,1.05fr)_minmax(420px,0.95fr)] bg-[radial-gradient(circle_at_13%_18%,var(--glow-lime),transparent_26rem),radial-gradient(circle_at_85%_84%,var(--glow-blue),transparent_22rem),var(--deep)] max-[900px]:block">
+    <main className="relative grid min-h-screen grid-cols-[minmax(0,1.05fr)_minmax(420px,0.95fr)] bg-[radial-gradient(circle_at_13%_18%,var(--glow-lime),transparent_26rem),radial-gradient(circle_at_85%_84%,var(--glow-blue),transparent_22rem),var(--deep)] max-[900px]:block">
       {children}
+      <ThemeToggle className="absolute right-6 top-6 z-10 max-[900px]:right-4 max-[900px]:top-4" />
 
       <section
         className="flex min-h-screen flex-col items-center justify-center p-8.5 max-[900px]:px-6 max-[900px]:py-11 max-[520px]:px-4.5 max-[520px]:py-8.5"

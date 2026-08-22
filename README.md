@@ -89,7 +89,7 @@ The repository rejects deep feature imports, arbitrary app-to-feature-UI imports
 
 Clubhouse uses Supabase Auth with the PKCE flow configuration. Credential submission runs through a real Next.js Server Action. The action validates the shared Zod contract, calls the server-side Supabase adapter, writes the session cookies, and redirects successful users to `/dashboard`.
 
-The Next.js Proxy refreshes existing Supabase cookies and owns the request-level route policy. The dashboard server page performs its own claims and user check before rendering. There is no preview authentication mode and no local-storage fallback.
+The Next.js Proxy refreshes existing Supabase cookies and owns the request-level route policy. The dashboard server page performs its own claims and user check before rendering. There is no preview authentication mode and no local-storage authentication fallback. A separate in-app theme switch lets users choose light or dark mode; its presentation preference is persisted independently from the Supabase auth session.
 
 ## Environment validation
 
