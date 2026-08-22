@@ -79,6 +79,7 @@
   --card-shadow: 0 20px 70px rgba(0, 0, 0, 0.2);
   --button-shadow: 0 12px 28px rgba(199, 230, 107, 0.16);
   --radius: 0.9rem;
+  --display-font: "Avenir Next", "Segoe UI", system-ui, sans-serif;
   --background: var(--deep);
   --foreground: var(--ink);
   --card: var(--deep-raised);

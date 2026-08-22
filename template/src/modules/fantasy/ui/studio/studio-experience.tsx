@@ -54,21 +54,7 @@ import {
 } from "./studio-primitives";
 import { useStudioSound } from "./studio-sound";
 
-function getInitialSelectedIds(players: Player[], formation: FormationConfig) {
-  const selectedIds = new Set<string>();
-  return formation.rows.flatMap((row) =>
-    row.flatMap((position) => {
-      const player = players.find(
-        (candidate) => candidate.position === position && !selectedIds.has(candidate.id),
-      );
-      if (!player) return [];
-      selectedIds.add(player.id);
-      return [player.id];
-    }),
-  );
-}
-
-const initialSelectedIds = getInitialSelectedIds(fantasyPlayers, ACTIVE_FORMATION);
+const initialSelectedIds: string[] = [];
 const scoutingPool = fantasyPlayers;
 const squadLimit = getFormationSlotCount(ACTIVE_FORMATION);
 
@@ -137,8 +123,6 @@ function StudioPitch({
       <div className="pointer-events-none absolute bottom-[6%] left-1/2 top-[6%] border-l border-white/35" />
       <div className="pointer-events-none absolute left-[6%] right-[6%] top-1/2 border-t border-white/50" />
       <div className="pointer-events-none absolute left-1/2 top-1/2 h-24 w-24 -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/55 md:h-28 md:w-28" />
-      <div className="pointer-events-none absolute left-[25%] right-[25%] top-[6%] h-[23%] rounded-b-xl border border-t-0 border-white/55" />
-      <div className="pointer-events-none absolute left-[35%] right-[35%] top-[6%] h-[10%] rounded-b-md border border-t-0 border-white/45" />
       <div className="pointer-events-none absolute bottom-[6%] left-[25%] right-[25%] h-[23%] rounded-t-xl border border-b-0 border-white/55" />
       <div className="pointer-events-none absolute bottom-[6%] left-[35%] right-[35%] h-[10%] rounded-t-md border border-b-0 border-white/45" />
       <span className="absolute left-5 top-5 text-[0.62rem] font-extrabold uppercase tracking-[0.17em] text-white/75">
@@ -566,19 +550,34 @@ function RevealStage({
   return (
     <div className="relative flex min-h-0 flex-1 items-center justify-center overflow-hidden px-5 py-4 md:px-10 md:py-6">
       <div className="pointer-events-none absolute inset-x-5 top-1/2 border-t border-(--line-subtle)" />
-      <section className="relative z-10 flex min-h-0 w-full max-w-4xl flex-col items-center border-y border-(--line) bg-(--deep-soft) px-4 py-5 md:px-8 md:py-7">
-        <div className="flex items-center gap-2 text-[0.62rem] font-extrabold uppercase tracking-[0.18em] text-(--lime)">
-          <Sparkles size={14} /> Read received
+      <section className="relative z-10 flex min-h-0 w-full max-w-5xl flex-col rounded-[2rem] border border-(--line) bg-(--surface-card) px-5 py-5 shadow-[var(--card-shadow)] md:px-10 md:py-8">
+        <div className="flex w-full items-center justify-between gap-4 border-b border-(--line) pb-4">
+          <div className="flex items-center gap-3">
+            <span className="grid h-10 w-10 place-items-center rounded-xl bg-(--accent-soft) text-(--lime)">
+              <Sparkles size={18} />
+            </span>
+            <div>
+              <p className="text-[0.72rem] font-extrabold uppercase tracking-[0.18em] text-(--lime)">
+                Read received
+              </p>
+              <p className="mt-1 text-[0.86rem] font-semibold text-(--ink-muted)">
+                Decision locked
+              </p>
+            </div>
+          </div>
+          <span className="rounded-full border border-(--accent-border) px-3 py-1.5 text-[0.68rem] font-black uppercase tracking-[0.13em] text-(--lime)">
+            Projected
+          </span>
         </div>
-        <div className="mt-4 flex items-end gap-4">
-          <span className="text-[clamp(5.5rem,13vw,10rem)] font-semibold leading-[0.72] tracking-[-0.14em] text-(--lime)">
+        <div className="flex flex-col items-center py-7 text-center md:py-9">
+          <span className="font-[var(--display-font)] text-[clamp(7rem,15vw,12rem)] font-black leading-[0.72] tracking-[-0.07em] text-(--lime)">
             {score.totalPoints}
           </span>
-          <span className="mb-2 max-w-20 text-[0.62rem] font-extrabold uppercase leading-[1.35] tracking-[0.14em] text-(--ink-faint)">
-            projected points
+          <span className="mt-5 text-[0.78rem] font-extrabold uppercase tracking-[0.2em] text-(--ink-muted)">
+            Projected points
           </span>
         </div>
-        <div className="mt-5 grid w-full min-w-0 grid-cols-3 gap-2 md:gap-3">
+        <div className="grid w-full min-w-0 grid-cols-1 gap-3 sm:grid-cols-3">
           <Metric
             label="Captain"
             tone="orange"
@@ -591,30 +590,34 @@ function RevealStage({
           />
           <Metric label="Multiplier" value="2× applied" />
         </div>
-        <div className="mt-4 grid w-full min-w-0 grid-cols-[repeat(auto-fit,minmax(8.5rem,1fr))] gap-2 md:mt-5">
+        <div className="mt-4 grid w-full min-w-0 grid-cols-[repeat(auto-fit,minmax(12rem,1fr))] gap-2.5 md:mt-5">
           {score.playerScores.map((playerScore) => {
             const player = getPlayer(playerScore.playerId, fantasyPlayers);
             return player ? (
               <div
-                className="flex min-w-0 items-center gap-2 overflow-hidden rounded-xl border border-(--line) bg-(--deep) px-2.5 py-2.5 md:px-3"
+                className="flex min-w-0 items-center gap-3 rounded-2xl border border-(--line) bg-(--deep) px-3 py-3"
                 key={player.id}
               >
                 <PlayerAvatar player={player} size="sm" />
-                <span className="min-w-0 flex-1 truncate text-[0.62rem] font-bold">
+                <span className="min-w-0 flex-1 truncate text-[0.82rem] font-bold text-(--ink)">
                   {player.name}
                 </span>
-                <span className="text-[0.66rem] font-black text-(--lime)">
+                <span className="text-[1rem] font-black text-(--lime)">
                   {playerScore.finalPoints}
                 </span>
               </div>
             ) : null;
           })}
         </div>
-        <div className="mt-5 flex flex-wrap justify-center gap-3">
-          <Button className="rounded-xl" onClick={onAgain} variant="outline">
-            <ArrowLeft size={15} /> Another read
+        <div className="mt-6 flex flex-wrap justify-center gap-3">
+          <Button
+            className="h-12 rounded-xl px-5 text-[0.95rem]"
+            onClick={onAgain}
+            variant="outline"
+          >
+            <ArrowLeft size={16} /> Another read
           </Button>
-          <Button className="rounded-xl" onClick={onExit}>
+          <Button className="h-12 rounded-xl px-5 text-[0.95rem]" onClick={onExit}>
             Exit studio <ArrowRight size={16} />
           </Button>
         </div>
@@ -629,7 +632,7 @@ export function StudioExperience({ managerName = "Marcus Khan" }: StudioExperien
   const studioSound = useStudioSound();
   const [stage, setStage] = useState<StudioStage>("entry");
   const [selectedIds, setSelectedIds] = useState(initialSelectedIds);
-  const [captainId, setCaptainId] = useState("p-008");
+  const [captainId, setCaptainId] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
@@ -681,6 +684,9 @@ export function StudioExperience({ managerName = "Marcus Khan" }: StudioExperien
 
   function exitStudio() {
     studioSound.play("back");
+    setSelectedIds([]);
+    setCaptainId("");
+    setSearchQuery("");
     setStage("entry");
   }
 
