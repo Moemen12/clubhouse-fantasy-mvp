@@ -19,16 +19,23 @@ import {
 import { Button } from "@/shared/frontend/ui";
 
 import {
+  ACTIVE_FORMATION,
   BUDGET_LIMIT,
   calculateTeamScore,
   getFormationMessage,
+  getFormationSlotCount,
   getFormationStatus,
   getPlayer,
   getSquadCost,
-  REQUIRED_FORMATION,
-  SQUAD_LIMIT,
+  POSITION_ORDER,
 } from "../../domain";
-import type { FormationStatus, Player, PlayerPosition, TeamState } from "../../domain";
+import type {
+  FormationConfig,
+  FormationStatus,
+  Player,
+  PlayerPosition,
+  TeamState,
+} from "../../domain";
 import { fantasyPlayers } from "../demo-data";
 import {
   BackAction,
@@ -45,22 +52,23 @@ import {
 } from "./studio-primitives";
 import { useStudioSound } from "./studio-sound";
 
-const initialSelectedIds = ["p-001", "p-002", "p-003", "p-005", "p-008"];
-const scoutingPool = fantasyPlayers.filter((player) =>
-  [
-    "p-001",
-    "p-002",
-    "p-003",
-    "p-004",
-    "p-005",
-    "p-006",
-    "p-007",
-    "p-008",
-    "p-009",
-    "p-010",
-  ].includes(player.id),
-);
-const formationRows: PlayerPosition[][] = [["FWD"], ["MID"], ["DEF", "DEF"], ["GK"]];
+function getInitialSelectedIds(players: Player[], formation: FormationConfig) {
+  const selectedIds = new Set<string>();
+  return formation.rows.flatMap((row) =>
+    row.flatMap((position) => {
+      const player = players.find(
+        (candidate) => candidate.position === position && !selectedIds.has(candidate.id),
+      );
+      if (!player) return [];
+      selectedIds.add(player.id);
+      return [player.id];
+    }),
+  );
+}
+
+const initialSelectedIds = getInitialSelectedIds(fantasyPlayers, ACTIVE_FORMATION);
+const scoutingPool = fantasyPlayers;
+const squadLimit = getFormationSlotCount(ACTIVE_FORMATION);
 
 function getManagerInitials(name: string) {
   return name
@@ -86,18 +94,40 @@ function StageDots({ stage }: { stage: StudioStage }) {
   );
 }
 
+function getPitchRows(selectedPlayers: Player[], formation: FormationConfig) {
+  const playersByPosition: Record<PlayerPosition, Player[]> = {
+    GK: [],
+    DEF: [],
+    MID: [],
+    FWD: [],
+  };
+  selectedPlayers.forEach((player) => {
+    playersByPosition[player.position].push(player);
+  });
+
+  const positionIndexes: Record<PlayerPosition, number> = { GK: 0, DEF: 0, MID: 0, FWD: 0 };
+  return formation.rows.map((row, rowIndex) => ({
+    key: `row-${rowIndex}`,
+    slots: row.map((position, slotIndex) => {
+      const player = playersByPosition[position][positionIndexes[position]];
+      positionIndexes[position] += 1;
+      return { key: `${rowIndex}-${slotIndex}-${position}`, player, position };
+    }),
+  }));
+}
+
 function StudioPitch({
   selectedPlayers,
   captainId,
+  formation,
   onCaptain,
 }: {
   selectedPlayers: Player[];
   captainId: string;
+  formation: FormationConfig;
   onCaptain: (playerId: string) => void;
 }) {
-  function findPositionPlayer(position: PlayerPosition, index: number) {
-    return selectedPlayers.filter((player) => player.position === position)[index];
-  }
+  const pitchRows = getPitchRows(selectedPlayers, formation);
 
   return (
     <div className="relative h-full min-h-[260px] md:min-h-[330px] overflow-hidden rounded-[30px] border border-(--pitch-border) bg-[linear-gradient(115deg,rgba(58,92,53,0.76),rgba(31,64,49,0.94))] shadow-[0_30px_90px_rgba(0,0,0,0.24)]">
@@ -110,13 +140,16 @@ function StudioPitch({
         Your decision surface
       </span>
       <span className="absolute right-5 top-5 font-mono text-[0.55rem] text-(--pitch-label)">
-        5—2—1—1 / LIVE
+        {formation.label.toUpperCase()} / LIVE
       </span>
       <div className="relative z-1 flex h-full flex-col justify-around px-[7%] py-[8%]">
-        {formationRows.map((row) => (
-          <div className="flex justify-center gap-[clamp(22px,9vw,104px)]" key={row.join("-")}>
-            {row.map((position, index) => {
-              const player = findPositionPlayer(position, index);
+        {pitchRows.map((row) => (
+          <div
+            className="flex max-w-full flex-wrap justify-center gap-x-[clamp(10px,3vw,48px)] gap-y-3"
+            key={row.key}
+          >
+            {row.slots.map((slot) => {
+              const player = slot.player;
               return player ? (
                 <button
                   className="group relative flex flex-col items-center gap-1.5 text-(--ink) transition-transform duration-200 hover:-translate-y-1"
@@ -148,10 +181,10 @@ function StudioPitch({
               ) : (
                 <span
                   className="grid h-20 w-16 place-items-center rounded-[22%] border border-dashed border-(--pitch-border) text-[0.5rem] font-bold uppercase tracking-[0.1em] text-(--pitch-label)"
-                  key={`${position}-${index}`}
+                  key={slot.key}
                 >
                   <span className="text-lg font-light">+</span>
-                  {position}
+                  {slot.position}
                 </span>
               );
             })}
@@ -216,7 +249,7 @@ function EntryStage({ managerName, onEnter }: { managerName: string; onEnter: ()
                 Squad slots
               </span>
               <strong className="mt-2 block text-[1.75rem] tracking-[-0.06em] text-(--lime)">
-                05
+                {String(squadLimit).padStart(2, "0")}
               </strong>
             </div>
             <div className="bg-(--deep-soft) p-4">
@@ -244,7 +277,7 @@ function EntryStage({ managerName, onEnter }: { managerName: string; onEnter: ()
   );
 }
 
-const formationOrder: PlayerPosition[] = ["GK", "DEF", "MID", "FWD"];
+const formationOrder = POSITION_ORDER;
 
 function FormationCheck({ status }: { status: FormationStatus }) {
   return (
@@ -282,7 +315,7 @@ function FormationCheck({ status }: { status: FormationStatus }) {
       <div className="mt-3 grid grid-cols-4 gap-2">
         {formationOrder.map((position) => {
           const count = status.counts[position];
-          const required = REQUIRED_FORMATION[position];
+          const required = status.required[position];
           const complete = count === required;
           return (
             <div
@@ -315,7 +348,7 @@ function FormationCheck({ status }: { status: FormationStatus }) {
 }
 
 function getScoutActionLabel(selectedCount: number, formationIsValid: boolean) {
-  if (selectedCount < SQUAD_LIMIT) return `Choose ${SQUAD_LIMIT - selectedCount} more`;
+  if (selectedCount < squadLimit) return `Choose ${squadLimit - selectedCount} more`;
   if (formationIsValid) return "Review your squad";
   return "Fix formation";
 }
@@ -337,10 +370,10 @@ function ScoutStage({
         <StageIntro
           detail="Tap a profile. It moves into your read."
           eyebrow="01 / scout the signal"
-          title="Find your five."
+          title={`Find your ${squadLimit} picks.`}
         />
         <div className="flex items-center gap-4">
-          <Metric label="Squad" value={`${selectedIds.length} / ${SQUAD_LIMIT}`} />
+          <Metric label="Squad" value={`${selectedIds.length} / ${squadLimit}`} />
           <Metric
             label="Budget"
             tone="blue"
@@ -368,7 +401,7 @@ function ScoutStage({
           <ArrowDown size={13} /> Your picks travel with you.
         </StudioHint>
         <StudioAction
-          disabled={selectedIds.length !== SQUAD_LIMIT || !formationStatus.isValid}
+          disabled={selectedIds.length !== squadLimit || !formationStatus.isValid}
           onClick={onReview}
         >
           {getScoutActionLabel(selectedIds.length, formationStatus.isValid)}
@@ -403,6 +436,7 @@ function SquadStage({
         <div className="min-h-0">
           <StudioPitch
             captainId={captainId}
+            formation={ACTIVE_FORMATION}
             onCaptain={onCaptain}
             selectedPlayers={selectedPlayers}
           />
@@ -494,7 +528,7 @@ function CaptainStage({
           eyebrow="03 / choose the multiplier"
           title="Who gets the moment?"
         />
-        <div className="mt-5 grid w-full max-w-4xl grid-cols-2 gap-3 overflow-visible p-2 sm:grid-cols-3 md:grid-cols-5">
+        <div className="mt-5 grid w-full max-w-4xl grid-cols-2 gap-3 overflow-visible p-2 sm:grid-cols-3 md:grid-cols-[repeat(auto-fit,minmax(9rem,1fr))]">
           {selectedPlayers.map((player) => (
             <CaptainCard
               active={player.id === captainId}
@@ -580,7 +614,7 @@ function RevealStage({
               />
               <Metric label="Multiplier" value="2× applied" />
             </div>
-            <div className="relative z-10 mt-4 grid w-full max-w-3xl min-w-0 grid-cols-5 gap-2 md:mt-5">
+            <div className="relative z-10 mt-4 grid w-full max-w-none min-w-0 grid-cols-[repeat(auto-fit,minmax(8.5rem,1fr))] gap-2 md:mt-5">
               {score.playerScores.map((playerScore) => {
                 const player = getPlayer(playerScore.playerId, fantasyPlayers);
                 return player ? (
@@ -622,7 +656,9 @@ function RevealStage({
             <span className="block text-[0.6rem] font-extrabold uppercase tracking-[0.16em] text-(--ink-faint)">
               Line-up
             </span>
-            <strong className="mt-2 block text-[1.1rem] tracking-[-0.04em]">Five selected</strong>
+            <strong className="mt-2 block text-[1.1rem] tracking-[-0.04em]">
+              {squadLimit} selected
+            </strong>
           </div>
           <div className="mt-5 border-t border-(--line) pt-4">
             <span className="block text-[0.6rem] font-extrabold uppercase tracking-[0.16em] text-(--ink-faint)">
@@ -667,10 +703,12 @@ export function StudioExperience({ managerName = "Marcus Khan" }: StudioExperien
 
   function togglePlayer(playerId: string) {
     const isSelected = selectedIds.includes(playerId);
+    if (!isSelected && selectedIds.length >= squadLimit) return;
+
     const nextCount = isSelected ? selectedIds.length - 1 : selectedIds.length + 1;
     if (isSelected) {
       studioSound.play("deselect");
-    } else if (nextCount === SQUAD_LIMIT) {
+    } else if (nextCount === squadLimit) {
       studioSound.play("complete");
     } else {
       studioSound.play("select");
@@ -681,7 +719,7 @@ export function StudioExperience({ managerName = "Marcus Khan" }: StudioExperien
         if (playerId === captainId) setCaptainId(next[0] ?? "");
         return next;
       }
-      if (current.length >= SQUAD_LIMIT) return current;
+      if (current.length >= squadLimit) return current;
       return [...current, playerId];
     });
   }

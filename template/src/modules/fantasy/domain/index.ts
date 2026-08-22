@@ -1,16 +1,22 @@
 export {
+  ACTIVE_FORMATION,
   BUDGET_LIMIT,
+  FORMATION_PRESETS,
   SQUAD_LIMIT,
   calculateTeamScore,
   getFormationMessage,
+  getFormationSlotCount,
   getFormationStatus,
   getPlayer,
   getSquadCost,
   getValidationMessage,
   isTeamComplete,
+  POSITION_ORDER,
   REQUIRED_FORMATION,
 } from "./fantasy";
 export type {
+  FormationConfig,
+  FormationRows,
   FormationStatus,
   Player,
   PlayerPosition,
