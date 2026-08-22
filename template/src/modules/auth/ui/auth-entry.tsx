@@ -1,10 +1,8 @@
-"use client";
 
 import type { ReactNode } from "react";
 import { useState } from "react";
 import { LockKeyhole } from "lucide-react";
 import type { AuthIntent } from "../domain/auth";
-import type { AuthClient } from "../ports";
 import {
   Badge,
   Card,
@@ -19,18 +17,22 @@ import {
   TabsTrigger,
 } from "@/shared/frontend/ui";
 import { AuthForm } from "./auth-form";
+import { useRouter } from "next/navigation";
+import { ROUTES } from "@/shared/kernel";
 
 type AuthEntryProps = Readonly<{
-  authClient: AuthClient;
-  onAuthenticated: () => void;
   story?: ReactNode;
 }>;
 
-export function AuthEntry({ authClient, onAuthenticated, story }: AuthEntryProps) {
+export function AuthEntry({ story }: AuthEntryProps) {
+  const router = useRouter();
   const [intent, setIntent] = useState<AuthIntent>("sign-in");
 
   function handleIntentChange(value: string) {
     setIntent(value as AuthIntent);
+  }
+  function handleAuthenticated() {
+    router.replace(ROUTES.DASHBOARD.ROOT);
   }
 
   return (
@@ -63,20 +65,10 @@ export function AuthEntry({ authClient, onAuthenticated, story }: AuthEntryProps
                 <TabsTrigger value="sign-up">Create account</TabsTrigger>
               </TabsList>
               <TabsContent value="sign-in">
-                <AuthForm
-                  key="sign-in"
-                  authClient={authClient}
-                  intent="sign-in"
-                  onAuthenticated={onAuthenticated}
-                />
+                <AuthForm key="sign-in" intent="sign-in" onAuthenticated={handleAuthenticated} />
               </TabsContent>
               <TabsContent value="sign-up">
-                <AuthForm
-                  key="sign-up"
-                  authClient={authClient}
-                  intent="sign-up"
-                  onAuthenticated={onAuthenticated}
-                />
+                <AuthForm key="sign-up" intent="sign-up" onAuthenticated={handleAuthenticated} />
               </TabsContent>
             </Tabs>
             <div className="mt-6 flex items-center gap-3 text-xs text-(--ink-faint)">

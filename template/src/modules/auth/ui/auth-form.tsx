@@ -1,5 +1,3 @@
-"use client";
-
 import { startTransition, useActionState, useEffect, useEffectEvent } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ArrowRight, Check } from "lucide-react";
@@ -7,7 +5,6 @@ import { useForm } from "react-hook-form";
 
 import { authInputSchema } from "../domain";
 import type { AuthInput, AuthIntent } from "../domain";
-import type { AuthClient } from "../ports";
 import {
   Button,
   Form,
@@ -19,14 +16,16 @@ import {
   Input,
 } from "@/shared/frontend/ui";
 import { initialAuthActionState, submitAuthForm } from "./auth-form-action";
+import { createAuthClient } from "./auth-client";
 
 type AuthFormProps = Readonly<{
-  authClient: AuthClient;
   intent: AuthIntent;
   onAuthenticated: () => void;
 }>;
 
-export function AuthForm({ authClient, intent, onAuthenticated }: AuthFormProps) {
+const authClient = createAuthClient();
+
+export function AuthForm({ intent, onAuthenticated }: AuthFormProps) {
   const isSignUp = intent === "sign-up";
   const [state, formAction, isPending] = useActionState(
     (previousState: typeof initialAuthActionState, formData: FormData) =>
