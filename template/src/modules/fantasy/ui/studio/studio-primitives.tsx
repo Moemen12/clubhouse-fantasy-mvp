@@ -123,7 +123,7 @@ export function StageIntro({
         <span className="h-px w-6 bg-(--lime)" />
         {eyebrow}
       </p>
-      <h1 className="mt-4 max-w-[11ch] text-[clamp(3.2rem,6.8vw,7rem)] font-semibold leading-[0.84] tracking-[-0.1em]">
+      <h1 className="mt-4 max-w-[11ch] text-[clamp(3.2rem,6.8vw,7rem)] font-bold leading-[0.9] tracking-[-0.045em]">
         {title}
       </h1>
       <p className="mt-4 max-w-md text-[0.95rem] leading-[1.55] text-(--ink-muted)">{detail}</p>

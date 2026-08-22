@@ -204,7 +204,7 @@ function EntryStage({ managerName, onEnter }: { managerName: string; onEnter: ()
           <span className="h-2.5 w-2.5 rounded-[3px] bg-(--lime) motion-safe:animate-pulse motion-reduce:animate-none" />
           Gameweek 04 is open
         </div>
-        <h1 className="mt-8 max-w-[9ch] text-[clamp(3.8rem,8vw,7.2rem)] font-semibold leading-[0.84] tracking-[-0.11em] md:mt-10">
+        <h1 className="mt-8 max-w-[10ch] text-[clamp(3.8rem,8vw,7.2rem)] font-bold leading-[0.9] tracking-[-0.05em] md:mt-10">
           Enter the room<span className="text-(--lime)">.</span>
         </h1>
         <p className="mt-5 max-w-lg text-[1rem] leading-[1.55] text-(--ink-muted) md:text-[1.1rem]">
