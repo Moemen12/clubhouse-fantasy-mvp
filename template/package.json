@@ -4,11 +4,13 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "prebuild": "npm run env:check",
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "check:runtime": "tsx scripts/check-runtime.ts",
+    "env:check": "tsx scripts/validate-env.ts",
     "secrets": "tsx scripts/check-staged-secrets.ts",
     "server-only:check": "tsx scripts/check-server-only.ts",
     "public-imports:check": "tsx scripts/check-public-imports.ts",

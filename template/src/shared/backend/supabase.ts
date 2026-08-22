@@ -24,12 +24,6 @@ export function createSupabaseServerClient(cookieStore: SupabaseCookieStore) {
   const { NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: publishableKey, NEXT_PUBLIC_SUPABASE_URL: url } =
     serverEnv;
 
-  if (!url || !publishableKey) {
-    throw new Error(
-      "Supabase is not configured. Set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY.",
-    );
-  }
-
   return createServerClient(url, publishableKey, {
     auth: { flowType: "pkce" },
     cookies: {

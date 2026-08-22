@@ -57,6 +57,8 @@ In the Supabase dashboard, open **Authentication → Providers → Email** and d
 
 The browser and server clients explicitly use `flowType: "pkce"`. This MVP does not use the implicit flow and does not send users through an email-confirmation route.
 
+Environment validation is centralized in `src/shared/kernel/env-validation.ts`. `src/instrumentation.ts` loads the Node-only validator once at server boot and exits with status `1` when configuration is invalid. The `prebuild` lifecycle invokes the same validator before `next build`, because instrumentation does not run during the build lifecycle. The browser and server client helpers only consume the validated configuration and do not repeat environment guards.
+
 ## Build later
 
 - Password reset screens.
@@ -68,7 +70,7 @@ The browser and server clients explicitly use `flowType: "pkce"`. This MVP does 
 ## Acceptance criteria
 
 - The example feature and example-only API wiring are removed.
-- Supabase configuration is required for the auth client and server guard.
+- Supabase configuration is required before the server boots or the application builds.
 - The auth screen appears at `/` for unauthenticated requests.
 - Unauthenticated requests to `/dashboard` return to `/` through Proxy.
 - Authenticated requests to `/` continue to `/dashboard` through Proxy.

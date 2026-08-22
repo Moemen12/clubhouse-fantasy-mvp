@@ -30,12 +30,6 @@ function createSupabaseClient() {
   const { NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: publishableKey, NEXT_PUBLIC_SUPABASE_URL: url } =
     clientEnv;
 
-  if (!url || !publishableKey) {
-    throw new Error(
-      "Supabase is not configured. Set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY.",
-    );
-  }
-
   return createBrowserClient(url, publishableKey, {
     auth: {
       flowType: "pkce",
