@@ -7,7 +7,7 @@ const brandMark =
 export function AuthStory() {
   return (
     <section
-      className="relative flex min-h-screen flex-col justify-between overflow-hidden border-r border-(--line) p-[clamp(28px,5vw,72px)] max-225:hidden before:absolute before:bottom-[-19vw] before:right-[-16vw] before:h-[54vw] before:w-[54vw] before:rounded-full before:border before:border-[rgba(215,255,79,0.13)] before:shadow-[0_0_0_80px_rgba(215,255,79,0.025),0_0_0_160px_rgba(215,255,79,0.02)] before:content-[''] after:absolute after:bottom-[17%] after:right-[20%] after:h-30 after:w-0.5 after:rotate-[35deg] after:bg-gradient-to-b after:from-(--lime) after:to-transparent after:opacity-35 after:content-[''] max-225:min-h-0 max-225:border-b max-225:border-r-0 max-225:px-6 max-225:py-7.5 max-225:pb-11.5 max-130:px-4.5 max-130:pb-8.5"
+      className="relative flex min-h-screen flex-col justify-between overflow-hidden border-r border-(--line) p-[clamp(28px,5vw,72px)] max-[900px]:hidden before:absolute before:bottom-[-19vw] before:right-[-16vw] before:h-[54vw] before:w-[54vw] before:rounded-full before:border before:border-[rgba(215,255,79,0.13)] before:shadow-[0_0_0_80px_rgba(215,255,79,0.025),0_0_0_160px_rgba(215,255,79,0.02)] before:content-[''] after:absolute after:bottom-[17%] after:right-[20%] after:h-30 after:w-0.5 after:rotate-[35deg] after:bg-gradient-to-b after:from-(--lime) after:to-transparent after:opacity-35 after:content-[''] max-[900px]:min-h-0 max-[900px]:border-b max-[900px]:border-r-0 max-[900px]:px-6 max-[900px]:py-7.5 max-[900px]:pb-11.5 max-[520px]:px-4.5 max-[520px]:pb-8.5"
       aria-labelledby="auth-story-title"
     >
       <div className="relative z-1 flex items-center gap-2.5">
@@ -22,7 +22,7 @@ export function AuthStory() {
         </span>
       </div>
 
-      <div className="relative z-1 max-w-155 py-[8vh] max-225:py-[70px_0_50px] max-130:py-[54px_0_40px]">
+      <div className="relative z-1 max-w-155 py-[8vh] max-[900px]:py-[70px_0_50px] max-[520px]:py-[54px_0_40px]">
         <Badge variant="success" className="w-fit">
           <Sparkles className="mr-1.5 h-3 w-3" />
           Season 01 · First light
@@ -31,7 +31,7 @@ export function AuthStory() {
           <span className="inline-block h-px w-8 bg-(--lime) opacity-80" /> Your match-day workspace
         </p>
         <h1
-          className="mt-4.5 max-w-[8ch] text-[clamp(4.3rem,8vw,8.8rem)] font-bold leading-[0.84] tracking-[-0.1em] max-225:text-[clamp(4rem,15vw,7rem)] max-130:text-[clamp(3.7rem,18vw,5.8rem)]"
+          className="mt-4.5 max-w-[8ch] text-[clamp(4.3rem,8vw,8.8rem)] font-bold leading-[0.84] tracking-[-0.1em] max-[900px]:text-[clamp(4rem,15vw,7rem)] max-[520px]:text-[clamp(3.7rem,18vw,5.8rem)]"
           id="auth-story-title"
         >
           Make your move count.
@@ -42,7 +42,7 @@ export function AuthStory() {
         </p>
       </div>
 
-      <div className="relative z-1 grid max-w-130 grid-cols-3 gap-5 max-130:gap-3">
+      <div className="relative z-1 grid max-w-130 grid-cols-3 gap-5 max-[520px]:gap-3">
         {[
           ["01", "focused gameweek"],
           ["2×", "captain's edge"],
@@ -52,7 +52,7 @@ export function AuthStory() {
             <strong className="text-[1.25rem] font-medium tracking-[-0.05em] text-(--lime)">
               {value}
             </strong>
-            <span className="text-[0.64rem] font-bold uppercase tracking-[0.1em] text-(--ink-faint) max-130:text-[0.55rem] max-130:tracking-[0.06em]">
+            <span className="text-[0.64rem] font-bold uppercase tracking-[0.1em] text-(--ink-faint) max-[520px]:text-[0.55rem] max-[520px]:tracking-[0.06em]">
               {label}
             </span>
           </div>

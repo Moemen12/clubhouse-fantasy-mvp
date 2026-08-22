@@ -22,11 +22,11 @@ type AuthEntryProps = Readonly<{
 
 export function AuthEntry({ children }: AuthEntryProps) {
   return (
-    <main className="grid min-h-screen grid-cols-[minmax(0,1.05fr)_minmax(420px,0.95fr)] bg-[radial-gradient(circle_at_13%_18%,rgba(215,255,79,0.08),transparent_26rem),radial-gradient(circle_at_85%_84%,rgba(145,184,255,0.08),transparent_22rem),var(--deep)] max-225:block">
+    <main className="grid min-h-screen grid-cols-[minmax(0,1.05fr)_minmax(420px,0.95fr)] bg-[radial-gradient(circle_at_13%_18%,rgba(215,255,79,0.08),transparent_26rem),radial-gradient(circle_at_85%_84%,rgba(145,184,255,0.08),transparent_22rem),var(--deep)] max-[900px]:block">
       {children}
 
       <section
-        className="flex min-h-screen flex-col items-center justify-center p-8.5 max-225:min-h-0 max-225:px-6 max-225:py-11 max-130:px-4.5 max-130:py-8.5"
+        className="flex min-h-screen flex-col items-center justify-center p-8.5 max-[900px]:px-6 max-[900px]:py-11 max-[520px]:px-4.5 max-[520px]:py-8.5"
         aria-label="Account access"
       >
         <Card className="w-full max-w-117.5">
