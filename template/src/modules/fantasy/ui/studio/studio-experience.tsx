@@ -32,6 +32,7 @@ import {
   StudioStage,
   positionLabels,
 } from "./studio-primitives";
+import { useStudioSound } from "./studio-sound";
 
 const initialSelectedIds = ["p-001", "p-002", "p-003", "p-005", "p-008"];
 const scoutingPool = fantasyPlayers.filter((player) =>
@@ -88,7 +89,7 @@ function StudioPitch({
   }
 
   return (
-    <div className="relative h-full min-h-[330px] overflow-hidden rounded-[30px] border border-(--pitch-border) bg-[linear-gradient(115deg,rgba(58,92,53,0.76),rgba(31,64,49,0.94))] shadow-[0_30px_90px_rgba(0,0,0,0.24)]">
+    <div className="relative h-full min-h-[260px] md:min-h-[330px] overflow-hidden rounded-[30px] border border-(--pitch-border) bg-[linear-gradient(115deg,rgba(58,92,53,0.76),rgba(31,64,49,0.94))] shadow-[0_30px_90px_rgba(0,0,0,0.24)]">
       <div className="pointer-events-none absolute inset-0 opacity-80 [background-image:linear-gradient(90deg,transparent_49.7%,var(--pitch-line)_50%,transparent_50.3%),linear-gradient(0deg,transparent_49.7%,var(--pitch-line)_50%,transparent_50.3%)]" />
       <div className="pointer-events-none absolute inset-[8%] rounded-[20px] border border-(--pitch-line)" />
       <div className="pointer-events-none absolute left-1/2 top-1/2 h-28 w-28 -translate-x-1/2 -translate-y-1/2 rounded-full border border-(--pitch-line)" />
@@ -197,7 +198,7 @@ function ScoutStage({
   onReview: () => void;
 }) {
   return (
-    <div className="flex min-h-0 flex-1 flex-col px-6 py-6 md:px-10 md:py-8">
+    <div className="flex min-h-0 flex-1 flex-col px-5 py-4 md:px-10 md:py-6">
       <div className="flex shrink-0 flex-col justify-between gap-5 md:flex-row md:items-end">
         <StageIntro
           detail="Tap a profile. It moves into your read."
@@ -213,7 +214,7 @@ function ScoutStage({
           />
         </div>
       </div>
-      <div className="mt-6 min-h-0 flex-1 overflow-x-auto pb-2 [scrollbar-width:none]">
+      <div className="mt-4 min-h-0 flex-1 overflow-x-auto pb-2 [scrollbar-width:none]">
         <div className="flex h-full min-w-max items-center gap-3 pr-8 md:gap-4">
           {scoutingPool.map((player) => (
             <PlayerCard
@@ -251,14 +252,14 @@ function SquadStage({
   onContinue: () => void;
 }) {
   return (
-    <div className="flex min-h-0 flex-1 flex-col px-6 py-5 md:px-10 md:py-7">
+    <div className="flex min-h-0 flex-1 flex-col px-5 py-4 md:px-10 md:py-6">
       <div className="flex shrink-0 items-center justify-between gap-4">
         <BackAction label="Back to scouting" onClick={onBack} />
         <StudioHint>
           <Focus size={13} /> Tap any player to set captain later
         </StudioHint>
       </div>
-      <div className="mt-5 flex min-h-0 flex-1 flex-col gap-4 lg:grid lg:grid-cols-[minmax(0,1fr)_280px]">
+      <div className="mt-3 flex min-h-0 flex-1 flex-col gap-3 md:grid md:grid-cols-[minmax(0,1fr)_280px]">
         <div className="min-h-0">
           <StudioPitch
             captainId={captainId}
@@ -278,7 +279,7 @@ function SquadStage({
             </div>
             <Zap className="text-(--lime)" size={18} />
           </div>
-          <div className="mt-5 min-h-0 flex-1 space-y-2 overflow-auto pr-1">
+          <div className="mt-3 min-h-0 flex-1 space-y-2 overflow-auto pr-1">
             {selectedPlayers.map((player) => (
               <button
                 className="flex w-full items-center gap-2.5 rounded-2xl border border-(--line) bg-transparent p-2 text-left transition-colors hover:border-(--accent-border) hover:bg-(--accent-soft)"
@@ -307,7 +308,7 @@ function SquadStage({
               </button>
             ))}
           </div>
-          <div className="mt-5 border-t border-(--line) pt-4">
+          <div className="mt-3 border-t border-(--line) pt-3">
             <div className="flex items-center justify-between text-[0.6rem] text-(--ink-faint)">
               <span>Total value</span>
               <strong className="text-(--ink)">
@@ -340,7 +341,7 @@ function CaptainStage({
   onLock: () => void;
 }) {
   return (
-    <div className="flex min-h-0 flex-1 flex-col items-center px-6 py-6 md:px-10 md:py-8">
+    <div className="flex min-h-0 flex-1 flex-col items-center px-5 py-4 md:px-10 md:py-6">
       <div className="flex w-full shrink-0 items-center justify-between gap-4">
         <BackAction label="Back to squad" onClick={onBack} />
         <StudioHint>
@@ -353,7 +354,7 @@ function CaptainStage({
           eyebrow="03 / choose the multiplier"
           title="Who gets the moment?"
         />
-        <div className="mt-7 grid w-full max-w-4xl grid-cols-2 gap-3 overflow-y-auto p-2 sm:grid-cols-3 lg:grid-cols-5">
+        <div className="mt-5 grid w-full max-w-4xl grid-cols-2 gap-2 overflow-y-auto p-1 sm:grid-cols-3 md:grid-cols-5">
           {selectedPlayers.map((player) => (
             <CaptainCard
               active={player.id === captainId}
@@ -363,7 +364,7 @@ function CaptainStage({
             />
           ))}
         </div>
-        <div className="mt-6 flex flex-wrap items-center justify-center gap-4">
+        <div className="mt-4 flex flex-wrap items-center justify-center gap-3">
           <StudioHint>
             {captainId
               ? `${getPlayer(captainId, fantasyPlayers)?.name} is wearing the armband.`
@@ -389,7 +390,7 @@ function RevealStage({
 }) {
   const score = calculateTeamScore(team, fantasyPlayers);
   return (
-    <div className="relative flex min-h-0 flex-1 flex-col items-center overflow-hidden px-6 py-6 md:px-10 md:py-8">
+    <div className="relative flex min-h-0 flex-1 flex-col items-center overflow-hidden px-5 py-4 md:px-10 md:py-6">
       <div className="pointer-events-none absolute left-1/2 top-1/2 h-[min(70vw,700px)] w-[min(70vw,700px)] -translate-x-1/2 -translate-y-1/2 rounded-full border border-(--accent-border) shadow-[0_0_180px_var(--glow-lime)]" />
       <div className="relative z-1 flex min-h-0 w-full max-w-5xl flex-1 flex-col items-center justify-center">
         <div className="flex items-center gap-2 text-[0.6rem] font-extrabold uppercase tracking-[0.18em] text-(--lime)">
@@ -401,7 +402,7 @@ function RevealStage({
         <span className="mt-5 text-[0.62rem] font-extrabold uppercase tracking-[0.2em] text-(--ink-faint)">
           projected points
         </span>
-        <div className="mt-8 grid w-full max-w-3xl gap-2 sm:grid-cols-3">
+        <div className="mt-6 grid w-full max-w-3xl grid-cols-3 gap-2">
           <Metric
             label="Captain"
             tone="orange"
@@ -414,7 +415,7 @@ function RevealStage({
           />
           <Metric label="Multiplier" value="2× applied" />
         </div>
-        <div className="mt-6 flex max-h-32 w-full max-w-3xl flex-wrap justify-center gap-2 overflow-hidden">
+        <div className="mt-5 flex max-h-28 w-full max-w-3xl flex-wrap justify-center gap-2 overflow-hidden">
           {score.playerScores.map((playerScore) => {
             const player = getPlayer(playerScore.playerId, fantasyPlayers);
             return player ? (
@@ -431,7 +432,7 @@ function RevealStage({
             ) : null;
           })}
         </div>
-        <div className="mt-8 flex flex-wrap justify-center gap-3">
+        <div className="mt-6 flex flex-wrap justify-center gap-3">
           <Button className="rounded-full" onClick={onAgain} variant="outline">
             <ArrowLeft size={15} /> Make another read
           </Button>
@@ -447,6 +448,7 @@ function RevealStage({
 type StudioExperienceProps = Readonly<{ managerName?: string }>;
 
 export function StudioExperience({ managerName = "Marcus Khan" }: StudioExperienceProps) {
+  const studioSound = useStudioSound();
   const [stage, setStage] = useState<StudioStage>("entry");
   const [selectedIds, setSelectedIds] = useState(initialSelectedIds);
   const [captainId, setCaptainId] = useState("p-008");
@@ -467,6 +469,7 @@ export function StudioExperience({ managerName = "Marcus Khan" }: StudioExperien
   const team: TeamState = { selectedPlayerIds: selectedIds, captainId };
 
   function togglePlayer(playerId: string) {
+    studioSound.play(selectedIds.includes(playerId) ? "deselect" : "select");
     setSelectedIds((current) => {
       if (current.includes(playerId)) {
         const next = current.filter((id) => id !== playerId);
@@ -479,22 +482,60 @@ export function StudioExperience({ managerName = "Marcus Khan" }: StudioExperien
   }
 
   function enterStudio() {
+    studioSound.play("enter");
     setStage("scout");
   }
 
   function exitStudio() {
+    studioSound.play("back");
     setStage("entry");
   }
 
+  function goBackToScout() {
+    studioSound.play("back");
+    setStage("scout");
+  }
+
+  function goBackToSquad() {
+    studioSound.play("back");
+    setStage("squad");
+  }
+
+  function chooseCaptain(playerId: string) {
+    studioSound.play("captain");
+    setCaptainId(playerId);
+  }
+
+  function reviewSquad() {
+    studioSound.play("advance");
+    setStage("squad");
+  }
+
+  function prepareCaptain() {
+    studioSound.play("advance");
+    setStage("captain");
+  }
+
+  function lockDecision() {
+    studioSound.play("lock");
+    setStage("reveal");
+  }
+
   function restartRead() {
+    studioSound.play("back");
     setSelectedIds([]);
     setCaptainId("");
     setStage("scout");
   }
 
   return (
-    <main className="flex h-dvh min-h-[560px] flex-col overflow-hidden bg-[radial-gradient(circle_at_78%_0%,var(--glow-lime),transparent_24rem),radial-gradient(circle_at_12%_80%,var(--glow-blue),transparent_25rem),var(--deep)] text-(--ink)">
-      <StudioHeader onExit={exitStudio} stage={stage} />
+    <main className="flex h-dvh min-h-0 flex-col overflow-hidden bg-[radial-gradient(circle_at_78%_0%,var(--glow-lime),transparent_24rem),radial-gradient(circle_at_12%_80%,var(--glow-blue),transparent_25rem),var(--deep)] text-(--ink)">
+      <StudioHeader
+        onExit={exitStudio}
+        onToggleSound={studioSound.toggle}
+        soundEnabled={studioSound.enabled}
+        stage={stage}
+      />
       {stage !== "entry" && (
         <div className="flex shrink-0 justify-center border-b border-(--line) px-5 py-2 md:hidden">
           <StageDots stage={stage} />
@@ -507,7 +548,7 @@ export function StudioExperience({ managerName = "Marcus Khan" }: StudioExperien
             <StageDots stage={stage} />
           </div>
           <ScoutStage
-            onReview={() => setStage("squad")}
+            onReview={reviewSquad}
             onTogglePlayer={togglePlayer}
             selectedIds={selectedIds}
           />
@@ -520,9 +561,9 @@ export function StudioExperience({ managerName = "Marcus Khan" }: StudioExperien
           </div>
           <SquadStage
             captainId={captainId}
-            onBack={() => setStage("scout")}
-            onCaptain={setCaptainId}
-            onContinue={() => setStage("captain")}
+            onBack={goBackToScout}
+            onCaptain={chooseCaptain}
+            onContinue={prepareCaptain}
             selectedPlayers={selectedPlayers}
           />
         </div>
@@ -534,9 +575,9 @@ export function StudioExperience({ managerName = "Marcus Khan" }: StudioExperien
           </div>
           <CaptainStage
             captainId={captainId}
-            onBack={() => setStage("squad")}
-            onCaptain={setCaptainId}
-            onLock={() => setStage("reveal")}
+            onBack={goBackToSquad}
+            onCaptain={chooseCaptain}
+            onLock={lockDecision}
             selectedPlayers={selectedPlayers}
           />
         </div>
