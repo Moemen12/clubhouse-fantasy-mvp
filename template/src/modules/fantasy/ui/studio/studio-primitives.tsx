@@ -273,11 +273,17 @@ export function Metric({
     tone
   ];
   return (
-    <div className="rounded-2xl border border-(--line) bg-(--deep-soft) px-4 py-3">
+    <div className="min-w-0 overflow-hidden rounded-2xl border border-(--line) bg-(--deep-soft) px-3 py-2.5 md:px-4 md:py-3">
       <span className="block text-[0.72rem] font-extrabold uppercase tracking-[0.15em] text-(--ink-faint)">
         {label}
       </span>
-      <strong className={cn("mt-2 block text-[1.45rem] tracking-[-0.06em]", toneClass)}>
+      <strong
+        className={cn(
+          "mt-2 block truncate text-[clamp(0.9rem,2.3vw,1.45rem)] tracking-[-0.06em]",
+          toneClass,
+        )}
+        title={value}
+      >
         {value}
       </strong>
     </div>
