@@ -164,36 +164,81 @@ function StudioPitch({
 
 function EntryStage({ managerName, onEnter }: { managerName: string; onEnter: () => void }) {
   return (
-    <div className="relative flex min-h-0 flex-1 items-center justify-center overflow-hidden px-6 py-8 md:px-12">
+    <div className="relative flex min-h-0 flex-1 overflow-hidden px-6 py-6 md:px-12 md:py-8">
       <div className="pointer-events-none absolute inset-0 [background-image:linear-gradient(var(--line-subtle)_1px,transparent_1px),linear-gradient(90deg,var(--line-subtle)_1px,transparent_1px)] [background-size:64px_64px]" />
-      <div className="pointer-events-none absolute left-1/2 top-1/2 h-[min(72vw,680px)] w-[min(72vw,680px)] -translate-x-1/2 -translate-y-1/2 rounded-full border border-(--accent-border) opacity-50 shadow-[0_0_160px_var(--glow-lime)]" />
-      <div className="pointer-events-none absolute left-1/2 top-1/2 h-[min(48vw,460px)] w-[min(48vw,460px)] -translate-x-1/2 -translate-y-1/2 rounded-full border border-dashed border-(--line-strong) opacity-70" />
-      <div className="relative z-1 flex max-w-3xl flex-col items-center text-center">
-        <div className="mb-7 flex items-center gap-3 rounded-full border border-(--accent-border) bg-(--accent-soft) px-4 py-2 text-[0.58rem] font-extrabold uppercase tracking-[0.17em] text-(--lime)">
-          <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-(--lime) motion-reduce:animate-none" />{" "}
-          Gameweek 04 is open
-        </div>
-        <span className="text-[clamp(5rem,14vw,11rem)] font-semibold leading-[0.72] tracking-[-0.13em] text-(--ink)">
-          01
-        </span>
-        <h1 className="mt-8 max-w-[9ch] text-[clamp(3.2rem,8vw,7.7rem)] font-semibold leading-[0.82] tracking-[-0.11em]">
-          Enter the room.
-        </h1>
-        <div className="mt-7 flex items-center gap-3 text-[0.68rem] text-(--ink-muted)">
-          <span className="grid h-8 w-8 place-items-center rounded-full bg-(--manager-avatar-bg) text-[0.58rem] font-black text-(--manager-avatar-ink)">
-            {getManagerInitials(managerName)}
-          </span>
-          Welcome back, {managerName}. Your read is waiting.
-        </div>
-        <Button className="mt-9 min-w-52 rounded-full" onClick={onEnter} size="lg">
-          Open the studio <Expand size={17} />
-        </Button>
-        <StudioHint>
-          <kbd className="rounded border border-(--line-strong) px-1.5 py-0.5 font-mono text-[0.52rem]">
-            Esc
-          </kbd>{" "}
-          exits any live session
-        </StudioHint>
+      <div className="pointer-events-none absolute left-[8%] top-1/2 h-[58%] -translate-y-1/2 border-l border-(--accent-border) opacity-70" />
+      <div className="pointer-events-none absolute bottom-8 left-[8%] right-[8%] border-t border-(--line-strong) opacity-60" />
+      <div className="relative z-10 mx-auto grid min-h-0 w-full max-w-6xl items-center gap-8 lg:grid-cols-[minmax(0,1.15fr)_minmax(18rem,0.55fr)] lg:gap-16">
+        <section className="min-w-0">
+          <div className="inline-flex items-center gap-3 rounded-xl border border-(--accent-border) bg-(--accent-soft) px-4 py-2.5 text-[0.68rem] font-extrabold uppercase tracking-[0.17em] text-(--lime)">
+            <span className="h-2.5 w-2.5 rounded-[3px] bg-(--lime) motion-safe:animate-pulse motion-reduce:animate-none" />
+            Gameweek 04 is open
+          </div>
+          <div className="mt-8 flex items-end gap-4 md:mt-10">
+            <span className="text-[clamp(5rem,13vw,10rem)] font-semibold leading-[0.72] tracking-[-0.13em] text-(--ink)">
+              01
+            </span>
+            <span className="mb-2 border-l border-(--line-strong) pl-4 font-mono text-[0.68rem] uppercase leading-[1.5] tracking-[0.15em] text-(--ink-faint)">
+              Entry point
+              <br />
+              Live session
+            </span>
+          </div>
+          <h1 className="mt-5 max-w-[9ch] text-[clamp(3.4rem,7vw,7.2rem)] font-semibold leading-[0.84] tracking-[-0.11em]">
+            Enter the room<span className="text-(--lime)">.</span>
+          </h1>
+          <p className="mt-6 max-w-xl text-[1.02rem] leading-[1.55] text-(--ink-muted) md:text-[1.12rem]">
+            Build one sharp read for Gameweek 04. Pick the signal, shape the squad, and decide who
+            gets the moment.
+          </p>
+          <div className="mt-7 flex flex-wrap items-center gap-4">
+            <Button className="min-w-56 rounded-xl" onClick={onEnter} size="lg">
+              Open the studio <Expand size={18} />
+            </Button>
+            <StudioHint>
+              <kbd className="rounded border border-(--line-strong) px-1.5 py-0.5 font-mono text-[0.58rem]">
+                Esc
+              </kbd>{" "}
+              exits any live session
+            </StudioHint>
+          </div>
+        </section>
+        <aside className="min-w-0 border-l border-(--line) pl-6 lg:pl-10">
+          <p className="text-[0.68rem] font-extrabold uppercase tracking-[0.18em] text-(--ink-faint)">
+            Room brief / 04
+          </p>
+          <h2 className="mt-4 max-w-[10ch] text-[clamp(1.8rem,3vw,3rem)] font-semibold leading-[0.95] tracking-[-0.07em]">
+            Your read is waiting.
+          </h2>
+          <div className="mt-7 grid grid-cols-2 gap-px overflow-hidden border border-(--line) bg-(--line)">
+            <div className="bg-(--deep-soft) p-4">
+              <span className="block text-[0.62rem] font-extrabold uppercase tracking-[0.14em] text-(--ink-faint)">
+                Squad slots
+              </span>
+              <strong className="mt-2 block text-[1.75rem] tracking-[-0.06em] text-(--lime)">
+                05
+              </strong>
+            </div>
+            <div className="bg-(--deep-soft) p-4">
+              <span className="block text-[0.62rem] font-extrabold uppercase tracking-[0.14em] text-(--ink-faint)">
+                Captain edge
+              </span>
+              <strong className="mt-2 block text-[1.75rem] tracking-[-0.06em] text-(--blue)">
+                2×
+              </strong>
+            </div>
+          </div>
+          <div className="mt-5 flex items-center gap-3 border-t border-(--line) pt-5 text-[0.82rem] text-(--ink-muted)">
+            <span className="grid h-10 w-10 place-items-center rounded-xl bg-(--manager-avatar-bg) text-[0.68rem] font-black text-(--manager-avatar-ink)">
+              {getManagerInitials(managerName)}
+            </span>
+            <span>
+              Welcome back, <strong className="text-(--ink)">{managerName}</strong>.
+              <br />
+              Your read is private until you lock it.
+            </span>
+          </div>
+        </aside>
       </div>
     </div>
   );
@@ -485,60 +530,109 @@ function RevealStage({
 }) {
   const score = calculateTeamScore(team, fantasyPlayers);
   return (
-    <div className="relative isolate flex min-h-0 flex-1 flex-col items-center overflow-hidden px-5 py-3 md:px-10 md:py-5">
-      <div className="pointer-events-none absolute left-1/2 top-1/2 z-0 aspect-square w-[min(100%,54rem)] -translate-x-1/2 -translate-y-1/2 rounded-full border border-(--accent-border) shadow-[0_0_180px_var(--glow-lime)]" />
-      <div className="relative z-10 flex min-h-0 w-full max-w-[52rem] flex-1 items-center justify-center">
-        <div className="flex max-h-full w-full flex-col items-center justify-center py-2">
-          <div className="flex items-center gap-2 text-[0.6rem] font-extrabold uppercase tracking-[0.18em] text-(--lime)">
-            <Sparkles size={14} /> Decision locked / read received
+    <div className="relative flex min-h-0 flex-1 overflow-hidden px-5 py-3 md:px-10 md:py-5">
+      <div className="pointer-events-none absolute inset-x-5 top-1/2 border-t border-(--line-subtle)" />
+      <div className="pointer-events-none absolute bottom-5 left-1/2 top-5 border-l border-(--line-subtle)" />
+      <div className="relative z-10 mx-auto grid min-h-0 w-full max-w-6xl flex-1 items-center gap-6 xl:grid-cols-[13rem_minmax(0,1fr)_13rem]">
+        <aside className="hidden h-full flex-col justify-center border-l-2 border-(--accent-border) pl-5 xl:flex">
+          <p className="text-[0.68rem] font-extrabold uppercase tracking-[0.18em] text-(--ink-faint)">
+            Read / 04
+          </p>
+          <strong className="mt-4 text-[1.55rem] font-semibold leading-[0.95] tracking-[-0.07em]">
+            Signal received.
+          </strong>
+          <div className="mt-8 border-t border-(--line) pt-4">
+            <span className="block text-[0.6rem] font-extrabold uppercase tracking-[0.16em] text-(--ink-faint)">
+              Status
+            </span>
+            <strong className="mt-2 block text-[1.1rem] tracking-[-0.04em] text-(--lime)">
+              Locked
+            </strong>
           </div>
-          <span className="mt-4 text-[clamp(4.5rem,12vh,10rem)] font-semibold leading-[0.72] tracking-[-0.14em] text-(--lime) md:mt-5">
-            {score.totalPoints}
-          </span>
-          <span className="mt-3 text-[0.62rem] font-extrabold uppercase tracking-[0.2em] text-(--ink-faint)">
-            projected points
-          </span>
-          <div className="relative z-10 mt-4 grid w-full max-w-none min-w-0 grid-cols-3 gap-2 md:mt-5">
-            <Metric
-              label="Captain"
-              tone="orange"
-              value={getPlayer(team.captainId ?? "", fantasyPlayers)?.name ?? "—"}
-            />
-            <Metric
-              label="Squad value"
-              tone="blue"
-              value={`${getSquadCost(team, fantasyPlayers)} cr`}
-            />
-            <Metric label="Multiplier" value="2× applied" />
+          <div className="mt-5 border-t border-(--line) pt-4">
+            <span className="block text-[0.6rem] font-extrabold uppercase tracking-[0.16em] text-(--ink-faint)">
+              Score type
+            </span>
+            <strong className="mt-2 block text-[1.1rem] tracking-[-0.04em]">Projected</strong>
           </div>
-          <div className="relative z-10 mt-4 grid w-full max-w-3xl min-w-0 grid-cols-5 gap-2 md:mt-5">
-            {score.playerScores.map((playerScore) => {
-              const player = getPlayer(playerScore.playerId, fantasyPlayers);
-              return player ? (
-                <div
-                  className="flex min-w-0 items-center gap-1.5 overflow-hidden rounded-full border border-(--line) bg-(--deep-soft) px-2 py-2 md:gap-2 md:px-3"
-                  key={player.id}
-                >
-                  <PlayerAvatar player={player} size="sm" />
-                  <span className="min-w-0 truncate text-[0.58rem] font-bold md:text-[0.6rem]">
-                    {player.name}
-                  </span>
-                  <span className="text-[0.6rem] font-black text-(--lime)">
-                    {playerScore.finalPoints}
-                  </span>
-                </div>
-              ) : null;
-            })}
+        </aside>
+        <section className="min-w-0 border-y border-(--line) bg-(--deep-soft) px-4 py-5 md:px-8 md:py-7">
+          <div className="flex max-h-full w-full flex-col items-center justify-center">
+            <div className="flex items-center gap-2 text-[0.6rem] font-extrabold uppercase tracking-[0.18em] text-(--lime)">
+              <Sparkles size={14} /> Decision locked / read received
+            </div>
+            <span className="mt-4 text-[clamp(4.5rem,12vh,10rem)] font-semibold leading-[0.72] tracking-[-0.14em] text-(--lime) md:mt-5">
+              {score.totalPoints}
+            </span>
+            <span className="mt-3 text-[0.62rem] font-extrabold uppercase tracking-[0.2em] text-(--ink-faint)">
+              projected points
+            </span>
+            <div className="relative z-10 mt-4 grid w-full max-w-none min-w-0 grid-cols-3 gap-2 md:mt-5">
+              <Metric
+                label="Captain"
+                tone="orange"
+                value={getPlayer(team.captainId ?? "", fantasyPlayers)?.name ?? "—"}
+              />
+              <Metric
+                label="Squad value"
+                tone="blue"
+                value={`${getSquadCost(team, fantasyPlayers)} cr`}
+              />
+              <Metric label="Multiplier" value="2× applied" />
+            </div>
+            <div className="relative z-10 mt-4 grid w-full max-w-3xl min-w-0 grid-cols-5 gap-2 md:mt-5">
+              {score.playerScores.map((playerScore) => {
+                const player = getPlayer(playerScore.playerId, fantasyPlayers);
+                return player ? (
+                  <div
+                    className="flex min-w-0 items-center gap-1.5 overflow-hidden rounded-full border border-(--line) bg-(--deep-soft) px-2 py-2 md:gap-2 md:px-3"
+                    key={player.id}
+                  >
+                    <PlayerAvatar player={player} size="sm" />
+                    <span className="min-w-0 truncate text-[0.58rem] font-bold md:text-[0.6rem]">
+                      {player.name}
+                    </span>
+                    <span className="text-[0.6rem] font-black text-(--lime)">
+                      {playerScore.finalPoints}
+                    </span>
+                  </div>
+                ) : null;
+              })}
+            </div>
+            <div className="relative z-10 mt-4 flex flex-wrap justify-center gap-3 md:mt-5">
+              <Button className="rounded-full" onClick={onAgain} variant="outline">
+                <ArrowLeft size={15} /> Make another read
+              </Button>
+              <Button className="rounded-full" onClick={onExit}>
+                Exit studio <ArrowRight size={16} />
+              </Button>
+            </div>
           </div>
-          <div className="relative z-10 mt-4 flex flex-wrap justify-center gap-3 md:mt-5">
-            <Button className="rounded-full" onClick={onAgain} variant="outline">
-              <ArrowLeft size={15} /> Make another read
-            </Button>
-            <Button className="rounded-full" onClick={onExit}>
-              Exit studio <ArrowRight size={16} />
-            </Button>
+        </section>
+        <aside className="hidden h-full flex-col justify-center border-t border-(--line) pt-5 xl:flex">
+          <p className="text-[0.68rem] font-extrabold uppercase tracking-[0.18em] text-(--ink-faint)">
+            Decision record
+          </p>
+          <strong className="mt-4 text-[1.55rem] font-semibold leading-[0.95] tracking-[-0.07em]">
+            One read.
+            <br />
+            One edge.
+          </strong>
+          <div className="mt-8 border-t border-(--line) pt-4">
+            <span className="block text-[0.6rem] font-extrabold uppercase tracking-[0.16em] text-(--ink-faint)">
+              Line-up
+            </span>
+            <strong className="mt-2 block text-[1.1rem] tracking-[-0.04em]">Five selected</strong>
           </div>
-        </div>
+          <div className="mt-5 border-t border-(--line) pt-4">
+            <span className="block text-[0.6rem] font-extrabold uppercase tracking-[0.16em] text-(--ink-faint)">
+              Multiplier
+            </span>
+            <strong className="mt-2 block text-[1.1rem] tracking-[-0.04em] text-(--lime)">
+              2× captain
+            </strong>
+          </div>
+        </aside>
       </div>
     </div>
   );
