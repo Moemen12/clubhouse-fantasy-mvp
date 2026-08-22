@@ -14,12 +14,11 @@ type AuthClientContainerProps = Readonly<{
 
 export function AuthClientContainer({ children }: AuthClientContainerProps) {
   const router = useRouter();
+  console.log(authClient);
 
   function handleAuthenticated() {
     router.replace(ROUTES.DASHBOARD.ROOT);
   }
 
-  return (
-    <AuthEntry authClient={authClient} onAuthenticated={handleAuthenticated} story={children} />
-  );
+  return <AuthEntry authClient={authClient} onAuthenticated={handleAuthenticated} story={children} />;
 }
