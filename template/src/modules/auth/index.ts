@@ -1,4 +1,4 @@
-export { AuthClientContainer, AuthEntry, AuthStory } from "./ui";
+export { AuthEntry, AuthStory } from "./ui";
 export { initialAuthActionState } from "./contracts";
 export type {
   AuthActionState,

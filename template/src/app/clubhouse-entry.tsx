@@ -1,14 +1,10 @@
-import { AuthClientContainer, AuthStory } from "@/modules/auth";
-import type { AuthFormAction } from "@/modules/auth/contracts";
+import { AuthEntry, AuthStory } from "@/modules/auth";
+import { submitAuthFormAction } from "./auth/actions";
 
-type ClubhouseEntryProps = Readonly<{
-  authAction: AuthFormAction;
-}>;
-
-export function ClubhouseEntry({ authAction }: ClubhouseEntryProps) {
+export function ClubhouseEntry() {
   return (
-    <AuthClientContainer authAction={authAction}>
+    <AuthEntry authAction={submitAuthFormAction}>
       <AuthStory />
-    </AuthClientContainer>
+    </AuthEntry>
   );
 }
