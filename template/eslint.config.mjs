@@ -42,6 +42,50 @@ const allowTypes = (types) => ({
   to: { element: { types: { anyOf: types } } },
 });
 
+const deepFeatureImportPattern = {
+  regex: "^@/modules/[^/]+/(?:ui|domain|application|ports|infrastructure|contracts)/.+$",
+  message: "Import feature APIs through the feature public barrel, not an internal file.",
+};
+
+const deepFeatureRelativeImportPattern = {
+  regex: "^(?:\\.\\./)+modules/[^/]+/(?:ui|domain|application|ports|infrastructure|contracts)/.+$",
+  message: "Import feature APIs through the feature public barrel, not an internal file.",
+};
+
+const portableUiImportPatterns = [
+  deepFeatureImportPattern,
+  deepFeatureRelativeImportPattern,
+  {
+    regex: "^@/app(?:/(?!auth/actions$).*)?$",
+    message: "Portable feature UI cannot import Next.js app delivery code.",
+  },
+  {
+    regex: "^(?:\\.\\./)+app/.+$",
+    message: "Portable feature UI cannot import Next.js app delivery code.",
+  },
+  {
+    regex: "^@/app/auth/actions$",
+    importNamePattern: "^(?!submitAuthFormAction$).+$",
+    message: "Import only the intended Server Action from the Next.js app boundary.",
+  },
+  {
+    regex: "^@/adapters/next(?:/.*)?$",
+    message: "Portable feature UI cannot import Next.js composition code.",
+  },
+  {
+    regex: "^(?:\\.\\./)+adapters/next/.+$",
+    message: "Portable feature UI cannot import Next.js composition code.",
+  },
+  {
+    regex: "^@/shared/backend(?:/.*)?$",
+    message: "Portable feature UI cannot import server backend code.",
+  },
+  {
+    regex: "^(?:\\.\\./)+shared/backend/.+$",
+    message: "Portable feature UI cannot import server backend code.",
+  },
+];
+
 const eslintConfig = defineConfig([
   ...nextVitals,
   ...nextTs,
@@ -161,6 +205,23 @@ const eslintConfig = defineConfig([
       "import-x/consistent-type-specifier-style": ["error", "prefer-top-level"],
       "sonarjs/no-nested-conditional": "error",
       "import-x/no-duplicates": "error",
+      "no-restricted-imports": [
+        "error",
+        {
+          patterns: [deepFeatureImportPattern, deepFeatureRelativeImportPattern],
+        },
+      ],
+    },
+  },
+  {
+    files: ["src/modules/*/ui/**/*"],
+    rules: {
+      "no-restricted-imports": [
+        "error",
+        {
+          patterns: portableUiImportPatterns,
+        },
+      ],
     },
   },
   globalIgnores([".next/**", "out/**", "build/**", "next-env.d.ts", "coverage/**", "reports/**"]),

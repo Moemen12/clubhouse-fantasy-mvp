@@ -1,9 +1,6 @@
-"use client";
-
 import type { ReactNode } from "react";
-import { useState } from "react";
 import { LockKeyhole } from "lucide-react";
-import type { AuthIntent } from "../domain/auth";
+
 import {
   Badge,
   Card,
@@ -20,16 +17,10 @@ import {
 import { AuthForm } from "./auth-form";
 
 type AuthEntryProps = Readonly<{
-  children?: ReactNode;
+  children: ReactNode;
 }>;
 
 export function AuthEntry({ children }: AuthEntryProps) {
-  const [intent, setIntent] = useState<AuthIntent>("sign-in");
-
-  function handleIntentChange(value: string) {
-    setIntent(value as AuthIntent);
-  }
-
   return (
     <main className="grid min-h-screen grid-cols-[minmax(0,1.05fr)_minmax(420px,0.95fr)] bg-[radial-gradient(circle_at_13%_18%,rgba(215,255,79,0.08),transparent_26rem),radial-gradient(circle_at_85%_84%,rgba(145,184,255,0.08),transparent_22rem),var(--deep)] max-225:block">
       {children}
@@ -54,7 +45,7 @@ export function AuthEntry({ children }: AuthEntryProps) {
             </div>
           </CardHeader>
           <CardContent>
-            <Tabs value={intent} onValueChange={handleIntentChange}>
+            <Tabs defaultValue="sign-in">
               <TabsList aria-label="Authentication mode">
                 <TabsTrigger value="sign-in">Sign in</TabsTrigger>
                 <TabsTrigger value="sign-up">Create account</TabsTrigger>

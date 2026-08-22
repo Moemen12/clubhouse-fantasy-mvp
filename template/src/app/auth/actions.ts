@@ -14,6 +14,8 @@ export async function submitAuthFormAction(
   previousState: AuthActionState,
   formData: FormData,
 ): Promise<AuthActionState> {
+  // Proxy may run before this POST, but it cannot persist the session created by this action.
+  // This request-bound client writes Supabase's new session cookies to the action response.
   const cookieStore = await cookies();
   const authClient = createNextAuthClient({
     getAll: () => cookieStore.getAll(),

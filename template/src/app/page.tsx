@@ -1,5 +1,9 @@
-import { ClubhouseEntry } from "./clubhouse-entry";
+import { AuthEntry, AuthStory } from "@/modules/auth";
 
 export default function Home() {
-  return <ClubhouseEntry />;
+  return (
+    <AuthEntry>
+      <AuthStory />
+    </AuthEntry>
+  );
 }
