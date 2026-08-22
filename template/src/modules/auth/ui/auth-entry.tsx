@@ -1,6 +1,9 @@
+"use client";
+
 import type { ReactNode } from "react";
 import { useState } from "react";
 import { LockKeyhole } from "lucide-react";
+import type { AuthFormAction } from "../contracts";
 import type { AuthIntent } from "../domain/auth";
 import {
   Badge,
@@ -16,22 +19,17 @@ import {
   TabsTrigger,
 } from "@/shared/frontend/ui";
 import { AuthForm } from "./auth-form";
-import { useRouter } from "next/navigation";
-import { ROUTES } from "@/shared/kernel";
 
 type AuthEntryProps = Readonly<{
   story?: ReactNode;
+  authAction: AuthFormAction;
 }>;
 
-export function AuthEntry({ story }: AuthEntryProps) {
-  const router = useRouter();
+export function AuthEntry({ story, authAction }: AuthEntryProps) {
   const [intent, setIntent] = useState<AuthIntent>("sign-in");
 
   function handleIntentChange(value: string) {
     setIntent(value as AuthIntent);
-  }
-  function handleAuthenticated() {
-    router.replace(ROUTES.DASHBOARD.ROOT);
   }
 
   return (
@@ -64,10 +62,10 @@ export function AuthEntry({ story }: AuthEntryProps) {
                 <TabsTrigger value="sign-up">Create account</TabsTrigger>
               </TabsList>
               <TabsContent value="sign-in">
-                <AuthForm key="sign-in" intent="sign-in" onAuthenticated={handleAuthenticated} />
+                <AuthForm key="sign-in" intent="sign-in" authAction={authAction} />
               </TabsContent>
               <TabsContent value="sign-up">
-                <AuthForm key="sign-up" intent="sign-up" onAuthenticated={handleAuthenticated} />
+                <AuthForm key="sign-up" intent="sign-up" authAction={authAction} />
               </TabsContent>
             </Tabs>
             <div className="mt-6 flex items-center gap-3 text-xs text-(--ink-faint)">

@@ -30,25 +30,28 @@ export type AuthFieldError = Readonly<{
 }>;
 export type AuthFieldErrors = Readonly<Partial<Record<AuthFieldName, AuthFieldError>>>;
 
+type AuthParseResult =
+  | Readonly<{ success: true; data: AuthInput }>
+  | Readonly<{ success: false; fieldErrors: AuthFieldErrors }>;
+
 function toFieldError(message?: string): AuthFieldError | undefined {
   return message ? { type: "server", message } : undefined;
 }
 
-export function validateAuthInput(input: AuthInput): AuthFieldErrors {
+export function parseAuthInput(input: unknown): AuthParseResult {
   const result = authInputSchema.safeParse(input);
 
   if (result.success) {
-    return {};
+    return { success: true, data: result.data };
   }
 
   const fieldErrors = result.error.flatten().fieldErrors;
   return {
-    email: toFieldError(fieldErrors.email?.[0]),
-    password: toFieldError(fieldErrors.password?.[0]),
-    displayName: toFieldError(fieldErrors.displayName?.[0]),
+    success: false,
+    fieldErrors: {
+      email: toFieldError(fieldErrors.email?.[0]),
+      password: toFieldError(fieldErrors.password?.[0]),
+      displayName: toFieldError(fieldErrors.displayName?.[0]),
+    },
   };
-}
-
-export function hasAuthFieldErrors(errors: AuthFieldErrors): boolean {
-  return Object.values(errors).some(Boolean);
 }

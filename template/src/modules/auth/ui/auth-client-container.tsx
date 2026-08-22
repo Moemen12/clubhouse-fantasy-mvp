@@ -2,12 +2,14 @@
 
 import type { ReactNode } from "react";
 
-import { AuthEntry } from "@/modules/auth";
+import type { AuthFormAction } from "../contracts";
+import { AuthEntry } from "./auth-entry";
 
 type AuthClientContainerProps = Readonly<{
   children: ReactNode;
+  authAction: AuthFormAction;
 }>;
 
-export function AuthClientContainer({ children }: AuthClientContainerProps) {
-  return <AuthEntry story={children} />;
+export function AuthClientContainer({ children, authAction }: AuthClientContainerProps) {
+  return <AuthEntry story={children} authAction={authAction} />;
 }

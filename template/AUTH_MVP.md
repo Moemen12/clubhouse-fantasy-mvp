@@ -16,7 +16,7 @@ Open Clubhouse
 
 ## Current implementation boundary
 
-Clubhouse uses Supabase Auth as its only authentication provider. The browser adapter owns credential submission through the Supabase PKCE client. The Next.js Proxy owns request-level route decisions and refreshes Supabase cookies. The `/dashboard` server page performs a defense-in-depth claims and user check before rendering the fantasy dashboard.
+Clubhouse uses Supabase Auth as its only authentication provider. The root auth form submits through a real Next.js Server Action, which uses the server Supabase client and writes the PKCE session into cookies. The Next.js Proxy owns request-level route decisions and refreshes Supabase cookies. The `/dashboard` server page performs a defense-in-depth claims and user check before rendering the fantasy dashboard.
 
 The UI and domain rules do not depend on Supabase types. The provider remains behind the auth feature port, while the application intentionally requires Supabase configuration for authentication to work.
 
@@ -40,9 +40,9 @@ The UI and domain rules do not depend on Supabase types. The provider remains be
 - shadcn/ui primitives for button, badge, card, input, label, separator, and tabs.
 - Auth-only root entrypoint and dedicated `/dashboard` route.
 - Next.js Proxy session refresh and route redirects.
-- Supabase-only browser and server session handling.
+- Supabase-only server action and server-rendered session handling.
 - Direct Supabase sign-up that returns an authenticated session immediately.
-- PKCE session storage and refresh without using the implicit flow.
+- PKCE session storage in cookies and refresh without using the implicit flow.
 
 ## Supabase configuration
 
@@ -55,7 +55,7 @@ NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=your_publishable_key
 
 In the Supabase dashboard, open **Authentication → Providers → Email** and disable **Confirm email**. The application expects `signUp()` to return a session immediately; if Supabase returns no session, the form reports that configuration requirement instead of pretending the user is logged in.
 
-The browser and server clients explicitly use `flowType: "pkce"`. This MVP does not use the implicit flow and does not send users through an email-confirmation route.
+The server Supabase client explicitly uses `flowType: "pkce"`. Credential submission is handled by the Server Action rather than a browser Supabase client. This MVP does not use the implicit flow and does not send users through an email-confirmation route.
 
 Environment validation is centralized in `src/shared/kernel/env-validation.ts`. `src/instrumentation.ts` loads the Node-only validator once at server boot and exits with status `1` when configuration is invalid. The `prebuild` lifecycle invokes the same validator before `next build`, because instrumentation does not run during the build lifecycle. The browser and server client helpers only consume the validated configuration and do not repeat environment guards.
 

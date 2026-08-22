@@ -1,7 +1,6 @@
 export {
   authInputSchema,
-  hasAuthFieldErrors,
-  validateAuthInput,
+  parseAuthInput,
   type AuthFieldError,
   type AuthFieldErrors,
   type AuthFieldName,

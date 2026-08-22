@@ -1,3 +1,5 @@
+"use client";
+
 import { startTransition, useActionState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ArrowRight, Check } from "lucide-react";
@@ -5,6 +7,8 @@ import { useForm } from "react-hook-form";
 
 import { authInputSchema } from "../domain";
 import type { AuthInput, AuthIntent } from "../domain";
+import { initialAuthActionState } from "../contracts";
+import type { AuthFormAction } from "../contracts";
 import {
   Button,
   Form,
@@ -15,30 +19,14 @@ import {
   FormMessage,
   Input,
 } from "@/shared/frontend/ui";
-import { initialAuthActionState, submitAuthForm } from "./auth-form-action";
-import { createAuthClient } from "./auth-client";
-
 type AuthFormProps = Readonly<{
   intent: AuthIntent;
-  onAuthenticated: () => void;
+  authAction: AuthFormAction;
 }>;
 
-const authClient = createAuthClient();
-
-export function AuthForm({ intent, onAuthenticated }: AuthFormProps) {
+export function AuthForm({ intent, authAction }: AuthFormProps) {
   const isSignUp = intent === "sign-up";
-  const [state, formAction, isPending] = useActionState(
-    async (previousState: typeof initialAuthActionState, formData: FormData) => {
-      const nextState = await submitAuthForm(authClient, intent, previousState, formData);
-
-      if (nextState.status === "success" && nextState.user) {
-        onAuthenticated();
-      }
-
-      return nextState;
-    },
-    initialAuthActionState,
-  );
+  const [state, formAction, isPending] = useActionState(authAction, initialAuthActionState);
   const form = useForm<AuthInput>({
     resolver: zodResolver(authInputSchema),
     errors: state.fieldErrors,
