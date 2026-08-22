@@ -236,16 +236,16 @@ export function CaptainCard({
   return (
     <button
       className={cn(
-        "relative flex flex-col items-center gap-2 rounded-3xl border border-(--line) bg-(--deep-soft) px-6 py-6 transition-[transform,border-color,background-color,box-shadow] duration-200 hover:-translate-y-1 hover:border-(--accent-border)",
+        "relative z-0 flex min-w-0 flex-col items-center gap-2 overflow-visible rounded-3xl border border-(--line) bg-(--deep-soft) px-6 py-6 transition-[transform,border-color,background-color,box-shadow] duration-200 hover:-translate-y-1 hover:border-(--accent-border)",
         active &&
-          "border-(--lime) bg-(--accent-soft) shadow-[0_0_0_4px_var(--accent-soft),var(--button-shadow)]",
+          "z-20 border-(--lime) bg-(--accent-soft) shadow-[0_0_0_4px_var(--accent-soft),var(--button-shadow)]",
       )}
       aria-pressed={active}
       onClick={onSelect}
       type="button"
     >
       {active && (
-        <span className="absolute -right-2 -top-2 grid h-6 w-6 place-items-center rounded-full bg-(--lime) text-(--lime-ink)">
+        <span className="absolute right-3 top-3 z-30 grid h-7 w-7 place-items-center rounded-full bg-(--lime) text-(--lime-ink) shadow-[var(--button-shadow)]">
           <Crown size={13} />
         </span>
       )}

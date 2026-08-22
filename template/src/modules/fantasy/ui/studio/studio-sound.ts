@@ -8,7 +8,6 @@ type StudioSound =
   | "deselect"
   | "complete"
   | "advance"
-  | "captain"
   | "lock"
   | "reveal"
   | "back";
@@ -19,7 +18,6 @@ const soundSources: Record<StudioSound, string> = {
   deselect: "/audio/studio/deselect.mp3",
   complete: "/audio/studio/complete.mp3",
   advance: "/audio/studio/forward.mp3",
-  captain: "/audio/studio/captain.mp3",
   lock: "/audio/studio/complete.mp3",
   reveal: "/audio/studio/reveal.mp3",
   back: "/audio/studio/back.mp3",

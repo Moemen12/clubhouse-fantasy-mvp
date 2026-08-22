@@ -449,7 +449,7 @@ function CaptainStage({
           eyebrow="03 / choose the multiplier"
           title="Who gets the moment?"
         />
-        <div className="mt-5 grid w-full max-w-4xl grid-cols-2 gap-2 overflow-y-auto p-1 sm:grid-cols-3 md:grid-cols-5">
+        <div className="mt-5 flex w-full max-w-4xl gap-3 overflow-x-auto overflow-y-visible p-2 [scrollbar-width:none] md:grid md:grid-cols-5 md:overflow-x-visible md:overflow-y-visible">
           {selectedPlayers.map((player) => (
             <CaptainCard
               active={player.id === captainId}
@@ -485,9 +485,9 @@ function RevealStage({
 }) {
   const score = calculateTeamScore(team, fantasyPlayers);
   return (
-    <div className="relative flex min-h-0 flex-1 flex-col items-center overflow-hidden px-5 py-4 md:px-10 md:py-6">
-      <div className="pointer-events-none absolute left-1/2 top-1/2 h-[min(70vw,700px)] w-[min(70vw,700px)] -translate-x-1/2 -translate-y-1/2 rounded-full border border-(--accent-border) shadow-[0_0_180px_var(--glow-lime)]" />
-      <div className="relative z-1 flex min-h-0 w-full max-w-5xl flex-1 flex-col items-center justify-center">
+    <div className="relative isolate flex min-h-0 flex-1 flex-col items-center overflow-hidden px-5 py-4 md:px-10 md:py-6">
+      <div className="pointer-events-none absolute left-1/2 top-1/2 z-0 aspect-square w-[min(72vw,720px)] -translate-x-1/2 -translate-y-1/2 rounded-full border border-(--accent-border) shadow-[0_0_180px_var(--glow-lime)]" />
+      <div className="relative z-10 flex min-h-0 w-full max-w-5xl flex-1 flex-col items-center justify-center">
         <div className="flex items-center gap-2 text-[0.6rem] font-extrabold uppercase tracking-[0.18em] text-(--lime)">
           <Sparkles size={14} /> Decision locked / read received
         </div>
@@ -497,7 +497,7 @@ function RevealStage({
         <span className="mt-5 text-[0.62rem] font-extrabold uppercase tracking-[0.2em] text-(--ink-faint)">
           projected points
         </span>
-        <div className="mt-6 grid w-full max-w-3xl grid-cols-3 gap-2">
+        <div className="relative z-10 mt-6 grid w-full max-w-3xl grid-cols-3 gap-2">
           <Metric
             label="Captain"
             tone="orange"
@@ -510,7 +510,7 @@ function RevealStage({
           />
           <Metric label="Multiplier" value="2× applied" />
         </div>
-        <div className="mt-5 flex max-h-28 w-full max-w-3xl flex-wrap justify-center gap-2 overflow-hidden">
+        <div className="relative z-10 mt-5 flex max-h-28 w-full max-w-3xl flex-wrap justify-center gap-2 overflow-hidden">
           {score.playerScores.map((playerScore) => {
             const player = getPlayer(playerScore.playerId, fantasyPlayers);
             return player ? (
@@ -527,7 +527,7 @@ function RevealStage({
             ) : null;
           })}
         </div>
-        <div className="mt-6 flex flex-wrap justify-center gap-3">
+        <div className="relative z-10 mt-6 flex flex-wrap justify-center gap-3">
           <Button className="rounded-full" onClick={onAgain} variant="outline">
             <ArrowLeft size={15} /> Make another read
           </Button>
@@ -609,7 +609,7 @@ export function StudioExperience({ managerName = "Marcus Khan" }: StudioExperien
   }
 
   function chooseCaptain(playerId: string) {
-    studioSound.play("captain");
+    studioSound.play("select");
     setCaptainId(playerId);
   }
 
