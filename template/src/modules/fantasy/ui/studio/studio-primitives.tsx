@@ -2,7 +2,7 @@
 
 import type { ReactNode } from "react";
 import Link from "next/link";
-import { ArrowLeft, ArrowRight, Crown, DoorOpen, Volume2, VolumeX } from "lucide-react";
+import { ArrowLeft, ArrowRight, Check, Crown, DoorOpen, Volume2, VolumeX } from "lucide-react";
 
 import { cn, ThemeToggle } from "@/shared/frontend";
 import { Button } from "@/shared/frontend/ui";
@@ -209,15 +209,15 @@ export function PlayerCard({
         <span className="mt-1 block text-[0.75rem] uppercase tracking-[0.12em] text-(--ink-faint)">
           {positionLabels[player.position]}
         </span>
-        <span className="mt-2 flex items-center gap-2 text-[0.8rem] font-bold text-(--lime)">
+        <span className="mt-2 flex items-center gap-2 text-[0.82rem] font-bold text-(--lime)">
           <span>{player.form.toFixed(1)} form</span>
           <span className="text-(--ink-faint)">·</span>
           <span>{player.price} cr</span>
         </span>
       </span>
       {selected && (
-        <span className="absolute right-3 top-3 grid h-5 w-5 place-items-center rounded-full bg-(--lime) text-(--lime-ink)">
-          ✓
+        <span className="absolute right-3 top-3 grid h-6 w-6 place-items-center rounded-full bg-(--lime) text-(--lime-ink) shadow-[0_3px_10px_rgba(0,0,0,0.18)]">
+          <Check size={13} strokeWidth={3.5} />
         </span>
       )}
     </button>
@@ -274,12 +274,12 @@ export function Metric({
   ];
   return (
     <div className="min-w-0 overflow-hidden rounded-2xl border border-(--line) bg-(--deep-soft) px-3 py-2.5 md:px-4 md:py-3">
-      <span className="block text-[0.72rem] font-extrabold uppercase tracking-[0.15em] text-(--ink-faint)">
+      <span className="block text-[0.76rem] font-extrabold uppercase tracking-[0.14em] text-(--ink-muted)">
         {label}
       </span>
       <strong
         className={cn(
-          "mt-2 block truncate text-[clamp(0.9rem,2.3vw,1.45rem)] tracking-[-0.06em]",
+          "mt-2 block truncate text-[clamp(1.05rem,2.5vw,1.6rem)] font-black leading-none tracking-[-0.04em]",
           toneClass,
         )}
         title={value}

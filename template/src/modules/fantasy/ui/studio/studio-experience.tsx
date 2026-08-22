@@ -11,12 +11,14 @@ import {
   Crown,
   Expand,
   Focus,
+  Search,
   Sparkles,
   Timer,
+  X,
   Zap,
 } from "lucide-react";
 
-import { Button } from "@/shared/frontend/ui";
+import { Button, Input } from "@/shared/frontend/ui";
 
 import {
   ACTIVE_FORMATION,
@@ -130,16 +132,19 @@ function StudioPitch({
   const pitchRows = getPitchRows(selectedPlayers, formation);
 
   return (
-    <div className="relative h-full min-h-[260px] md:min-h-[330px] overflow-hidden rounded-[30px] border border-(--pitch-border) bg-[linear-gradient(115deg,rgba(58,92,53,0.76),rgba(31,64,49,0.94))] shadow-[0_30px_90px_rgba(0,0,0,0.24)]">
-      <div className="pointer-events-none absolute inset-0 opacity-80 [background-image:linear-gradient(90deg,transparent_49.7%,var(--pitch-line)_50%,transparent_50.3%),linear-gradient(0deg,transparent_49.7%,var(--pitch-line)_50%,transparent_50.3%)]" />
-      <div className="pointer-events-none absolute inset-[8%] rounded-[20px] border border-(--pitch-line)" />
-      <div className="pointer-events-none absolute left-1/2 top-1/2 h-28 w-28 -translate-x-1/2 -translate-y-1/2 rounded-full border border-(--pitch-line)" />
-      <div className="pointer-events-none absolute left-[11%] right-[11%] top-0 h-[18%] rounded-b-[50%] border border-b-0 border-(--pitch-line)" />
-      <div className="pointer-events-none absolute bottom-0 left-[11%] right-[11%] h-[18%] rounded-t-[50%] border border-b-0 border-(--pitch-line)" />
-      <span className="absolute left-5 top-5 text-[0.55rem] font-extrabold uppercase tracking-[0.17em] text-(--pitch-label)">
-        Your decision surface
+    <div className="relative h-full min-h-[260px] overflow-hidden rounded-[30px] border border-white/35 bg-(--pitch-surface) shadow-[0_30px_90px_rgba(0,0,0,0.24)] md:min-h-[330px]">
+      <div className="pointer-events-none absolute inset-[6%] rounded-[18px] border border-white/60" />
+      <div className="pointer-events-none absolute bottom-[6%] left-1/2 top-[6%] border-l border-white/35" />
+      <div className="pointer-events-none absolute left-[6%] right-[6%] top-1/2 border-t border-white/50" />
+      <div className="pointer-events-none absolute left-1/2 top-1/2 h-24 w-24 -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/55 md:h-28 md:w-28" />
+      <div className="pointer-events-none absolute left-[25%] right-[25%] top-[6%] h-[23%] rounded-b-xl border border-t-0 border-white/55" />
+      <div className="pointer-events-none absolute left-[35%] right-[35%] top-[6%] h-[10%] rounded-b-md border border-t-0 border-white/45" />
+      <div className="pointer-events-none absolute bottom-[6%] left-[25%] right-[25%] h-[23%] rounded-t-xl border border-b-0 border-white/55" />
+      <div className="pointer-events-none absolute bottom-[6%] left-[35%] right-[35%] h-[10%] rounded-t-md border border-b-0 border-white/45" />
+      <span className="absolute left-5 top-5 text-[0.62rem] font-extrabold uppercase tracking-[0.17em] text-white/75">
+        Stadium / live read
       </span>
-      <span className="absolute right-5 top-5 font-mono text-[0.55rem] text-(--pitch-label)">
+      <span className="absolute right-5 top-5 font-mono text-[0.62rem] font-bold text-white/75">
         {formation.label.toUpperCase()} / LIVE
       </span>
       <div className="relative z-1 flex h-full flex-col justify-around px-[7%] py-[8%]">
@@ -153,6 +158,7 @@ function StudioPitch({
               return player ? (
                 <button
                   className="group relative flex flex-col items-center gap-1.5 text-(--ink) transition-transform duration-200 hover:-translate-y-1"
+                  aria-pressed={player.id === captainId}
                   key={player.id}
                   onClick={() => onCaptain(player.id)}
                   type="button"
@@ -213,15 +219,22 @@ function EntryStage({ managerName, onEnter }: { managerName: string; onEnter: ()
         <Button className="mt-8 min-w-56 rounded-xl" onClick={onEnter} size="lg">
           Open the studio <Expand size={18} />
         </Button>
-        <div className="mt-6 flex flex-wrap items-center justify-center gap-4 text-[0.82rem] text-(--ink-muted)">
+        <div className="mt-7 flex flex-wrap items-center justify-center gap-5 text-[0.95rem] text-(--ink-muted)">
           <span className="inline-flex items-center gap-3">
-            <span className="grid h-9 w-9 place-items-center rounded-xl bg-(--manager-avatar-bg) text-[0.62rem] font-black text-(--manager-avatar-ink)">
+            <span className="grid h-11 w-11 place-items-center rounded-xl bg-(--manager-avatar-bg) text-[0.72rem] font-black text-(--manager-avatar-ink)">
               {getManagerInitials(managerName)}
             </span>
-            Welcome back, <strong className="text-(--ink)">{managerName}</strong>
+            <span>
+              <span className="block text-[0.76rem] font-semibold text-(--ink-muted)">
+                Welcome back,
+              </span>
+              <strong className="mt-0.5 block text-[1.15rem] font-black leading-none tracking-[-0.03em] text-(--ink)">
+                {managerName}
+              </strong>
+            </span>
           </span>
           <StudioHint>
-            <kbd className="rounded border border-(--line-strong) px-1.5 py-0.5 font-mono text-[0.58rem]">
+            <kbd className="rounded border border-(--line-strong) px-2 py-1 font-mono text-[0.68rem] font-bold">
               Esc
             </kbd>{" "}
             exits any live session
@@ -236,67 +249,54 @@ const formationOrder = POSITION_ORDER;
 
 function FormationCheck({ status }: { status: FormationStatus }) {
   return (
-    <div className="shrink-0 rounded-3xl border border-(--line) bg-(--deep-soft) px-4 py-3 md:px-5">
-      <div className="flex items-center justify-between gap-4">
-        <div className="flex items-center gap-3">
-          <span
-            className={
-              status.isValid
-                ? "grid h-8 w-8 place-items-center rounded-full bg-(--lime) text-(--lime-ink)"
-                : "grid h-8 w-8 place-items-center rounded-full bg-(--orange-border) text-(--orange)"
-            }
-          >
-            {status.isValid ? <Check size={16} /> : <AlertCircle size={16} />}
-          </span>
-          <div>
-            <p className="text-[0.62rem] font-extrabold uppercase tracking-[0.16em] text-(--ink-faint)">
-              Formation check
-            </p>
-            <strong className="mt-1 block text-[0.9rem] tracking-[-0.03em]">
-              {status.isValid ? "Shape is ready." : "Build a legal shape."}
-            </strong>
-          </div>
-        </div>
+    <div className="flex shrink-0 flex-wrap items-center gap-x-4 gap-y-3 rounded-2xl border border-(--line) bg-(--surface-card) px-4 py-3 md:px-5">
+      <div className="flex min-w-max items-center gap-3">
         <span
           className={
             status.isValid
-              ? "text-[0.72rem] font-black uppercase tracking-[0.12em] text-(--lime)"
-              : "text-[0.72rem] font-black uppercase tracking-[0.12em] text-(--orange)"
+              ? "grid h-8 w-8 place-items-center rounded-full bg-(--lime) text-(--lime-ink)"
+              : "grid h-8 w-8 place-items-center rounded-full bg-(--danger-bg) text-(--orange)"
           }
         >
-          {status.isValid ? "Ready" : "Adjust"}
+          {status.isValid ? <Check size={16} strokeWidth={3} /> : <AlertCircle size={16} />}
         </span>
+        <div>
+          <p className="text-[0.62rem] font-extrabold uppercase tracking-[0.16em] text-(--ink-faint)">
+            Formation
+          </p>
+          <strong className="mt-0.5 block text-[0.92rem] tracking-[-0.02em]">
+            {status.isValid ? "Shape is ready" : "Balance your squad"}
+          </strong>
+        </div>
       </div>
-      <div className="mt-3 grid grid-cols-4 gap-2">
+      <div className="flex min-w-0 flex-1 flex-wrap gap-2">
         {formationOrder.map((position) => {
           const count = status.counts[position];
           const required = status.required[position];
           const complete = count === required;
           return (
-            <div
-              className={`rounded-2xl border px-2 py-2 text-center ${complete ? "border-(--accent-border) bg-(--accent-soft)" : "border-(--orange-border) bg-(--danger-bg)"}`}
+            <span
+              className={`inline-flex min-h-9 items-center gap-2 rounded-full border px-3 text-[0.72rem] font-bold ${complete ? "border-(--accent-border) bg-(--accent-soft) text-(--ink)" : "border-(--orange-border) bg-(--danger-bg) text-(--orange)"}`}
               key={position}
             >
-              <span className="block text-[0.58rem] font-extrabold uppercase tracking-[0.1em] text-(--ink-faint)">
+              <span className="text-[0.62rem] font-extrabold uppercase tracking-[0.1em] text-(--ink-faint)">
                 {position}
               </span>
-              <strong
-                className={`mt-1 block text-[0.94rem] ${complete ? "text-(--lime)" : "text-(--orange)"}`}
-              >
+              <strong className="text-[0.86rem]">
                 {count}/{required}
               </strong>
-            </div>
+            </span>
           );
         })}
       </div>
       <p
         className={
           status.isValid
-            ? "mt-3 text-[0.72rem] text-(--lime)"
-            : "mt-3 text-[0.72rem] text-(--orange)"
+            ? "text-[0.7rem] font-extrabold uppercase tracking-[0.11em] text-(--lime)"
+            : "max-w-full text-[0.72rem] font-semibold text-(--orange)"
         }
       >
-        {getFormationMessage(status)}
+        {status.isValid ? "Ready" : getFormationMessage(status)}
       </p>
     </div>
   );
@@ -310,15 +310,27 @@ function getScoutActionLabel(selectedCount: number, formationIsValid: boolean) {
 
 function ScoutStage({
   selectedIds,
+  searchQuery,
   formationStatus,
+  onSearchChange,
   onTogglePlayer,
   onReview,
 }: {
   selectedIds: string[];
+  searchQuery: string;
   formationStatus: FormationStatus;
+  onSearchChange: (value: string) => void;
   onTogglePlayer: (playerId: string) => void;
   onReview: () => void;
 }) {
+  const normalizedQuery = searchQuery.trim().toLowerCase();
+  const visiblePlayers = scoutingPool.filter((player) => {
+    if (!normalizedQuery) return true;
+    return [player.name, player.club, player.position, positionLabels[player.position]].some(
+      (value) => value.toLowerCase().includes(normalizedQuery),
+    );
+  });
+
   return (
     <div className="flex min-h-0 flex-1 flex-col px-5 py-4 md:px-10 md:py-6">
       <div className="flex shrink-0 flex-col justify-between gap-5 md:flex-row md:items-end">
@@ -338,16 +350,47 @@ function ScoutStage({
       </div>
       <div className="mt-4 flex min-h-0 flex-1 flex-col overflow-hidden">
         <FormationCheck status={formationStatus} />
+        <div className="relative mt-3 shrink-0 max-w-xl">
+          <Search
+            aria-hidden="true"
+            className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-(--ink-faint)"
+            size={17}
+          />
+          <Input
+            aria-label="Search players"
+            className="h-12 rounded-2xl pl-11 pr-11 text-[0.95rem]"
+            onChange={(event) => onSearchChange(event.target.value)}
+            placeholder="Search by player, club, or position"
+            type="search"
+            value={searchQuery}
+          />
+          {searchQuery && (
+            <button
+              aria-label="Clear player search"
+              className="absolute right-3 top-1/2 grid h-8 w-8 -translate-y-1/2 place-items-center rounded-full text-(--ink-faint) transition-colors hover:bg-(--accent-soft) hover:text-(--ink)"
+              onClick={() => onSearchChange("")}
+              type="button"
+            >
+              <X size={15} />
+            </button>
+          )}
+        </div>
         <div className="mt-3 min-h-0 flex-1 overflow-x-auto pb-2 [scrollbar-width:none]">
           <div className="flex h-full min-w-max items-center gap-3 pr-8 md:gap-4">
-            {scoutingPool.map((player) => (
-              <PlayerCard
-                key={player.id}
-                onSelect={() => onTogglePlayer(player.id)}
-                player={player}
-                selected={selectedIds.includes(player.id)}
-              />
-            ))}
+            {visiblePlayers.length > 0 ? (
+              visiblePlayers.map((player) => (
+                <PlayerCard
+                  key={player.id}
+                  onSelect={() => onTogglePlayer(player.id)}
+                  player={player}
+                  selected={selectedIds.includes(player.id)}
+                />
+              ))
+            ) : (
+              <div className="flex min-h-24 min-w-full items-center justify-center rounded-3xl border border-dashed border-(--line-strong) px-6 text-center text-[0.9rem] font-semibold text-(--ink-muted)">
+                No players match “{searchQuery}”. Try a name, club, or position.
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -411,7 +454,8 @@ function SquadStage({
           <div className="mt-3 min-h-0 flex-1 space-y-2 overflow-auto pr-1">
             {selectedPlayers.map((player) => (
               <button
-                className="flex w-full items-center gap-2.5 rounded-2xl border border-(--line) bg-transparent p-2 text-left transition-colors hover:border-(--accent-border) hover:bg-(--accent-soft)"
+                className={`flex w-full items-center gap-3 rounded-2xl border p-2.5 text-left transition-[border-color,background-color,box-shadow] ${player.id === captainId ? "border-(--lime) bg-(--accent-soft) shadow-[0_0_0_2px_var(--accent-soft)]" : "border-(--line) bg-transparent hover:border-(--accent-border) hover:bg-(--accent-soft)"}`}
+                aria-pressed={player.id === captainId}
                 key={player.id}
                 onClick={() => onCaptain(player.id)}
                 type="button"
@@ -421,26 +465,27 @@ function SquadStage({
                   <strong className="block overflow-hidden text-ellipsis whitespace-nowrap text-[0.68rem]">
                     {player.name}
                   </strong>
-                  <span className="mt-1 block text-[0.55rem] uppercase tracking-[0.1em] text-(--ink-faint)">
+                  <span className="mt-1 block text-[0.7rem] font-semibold text-(--blue)">
                     {positionLabels[player.position]} · {player.price} cr
                   </span>
                 </span>
                 <span
                   className={
                     player.id === captainId
-                      ? "text-[0.55rem] font-black text-(--lime)"
-                      : "text-[0.55rem] text-(--ink-faint)"
+                      ? "inline-flex items-center gap-1.5 rounded-full bg-(--lime) px-2 py-1 text-[0.62rem] font-black uppercase tracking-[0.08em] text-(--lime-ink)"
+                      : "text-[0.62rem] font-semibold uppercase tracking-[0.08em] text-(--ink-faint)"
                   }
                 >
-                  {player.id === captainId ? "CAPTAIN" : "READY"}
+                  {player.id === captainId && <Crown size={12} />}
+                  {player.id === captainId ? "Captain" : "Ready"}
                 </span>
               </button>
             ))}
           </div>
-          <div className="mt-3 border-t border-(--line) pt-3">
-            <div className="flex items-center justify-between text-[0.6rem] text-(--ink-faint)">
-              <span>Total value</span>
-              <strong className="text-(--ink)">
+          <div className="mt-3 border-t border-(--line) pt-4">
+            <div className="flex items-end justify-between gap-3 text-[0.9rem] text-(--ink-muted)">
+              <span className="font-bold">Total value</span>
+              <strong className="text-[1.35rem] font-black leading-none tracking-[-0.04em] text-(--blue)">
                 {getSquadCost(
                   { selectedPlayerIds: selectedPlayers.map((player) => player.id), captainId },
                   fantasyPlayers,
@@ -585,6 +630,7 @@ export function StudioExperience({ managerName = "Marcus Khan" }: StudioExperien
   const [stage, setStage] = useState<StudioStage>("entry");
   const [selectedIds, setSelectedIds] = useState(initialSelectedIds);
   const [captainId, setCaptainId] = useState("p-008");
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     function handleKeyDown(event: KeyboardEvent) {
@@ -697,7 +743,9 @@ export function StudioExperience({ managerName = "Marcus Khan" }: StudioExperien
           <ScoutStage
             formationStatus={formationStatus}
             onReview={reviewSquad}
+            onSearchChange={setSearchQuery}
             onTogglePlayer={togglePlayer}
+            searchQuery={searchQuery}
             selectedIds={selectedIds}
           />
         </div>
