@@ -7,7 +7,7 @@ const brandMark =
 export function AuthStory() {
   return (
     <section
-      className="relative flex min-h-screen flex-col justify-between overflow-hidden border-r border-(--line) p-[clamp(28px,5vw,72px)] max-[900px]:hidden before:absolute before:bottom-[-19vw] before:right-[-16vw] before:h-[54vw] before:w-[54vw] before:rounded-full before:border before:border-[rgba(215,255,79,0.13)] before:shadow-[0_0_0_80px_rgba(215,255,79,0.025),0_0_0_160px_rgba(215,255,79,0.02)] before:content-[''] after:absolute after:bottom-[17%] after:right-[20%] after:h-30 after:w-0.5 after:rotate-[35deg] after:bg-gradient-to-b after:from-(--lime) after:to-transparent after:opacity-35 after:content-[''] max-[900px]:min-h-0 max-[900px]:border-b max-[900px]:border-r-0 max-[900px]:px-6 max-[900px]:py-7.5 max-[900px]:pb-11.5 max-[520px]:px-4.5 max-[520px]:pb-8.5"
+      className="relative flex min-h-screen flex-col justify-between overflow-hidden border-r border-(--line) p-[clamp(28px,5vw,72px)] max-[900px]:hidden before:absolute before:bottom-[-19vw] before:right-[-16vw] before:h-[54vw] before:w-[54vw] before:rounded-full before:border before:border-(--story-ring) before:shadow-[0_0_0_80px_var(--story-ring-shadow),0_0_0_160px_var(--story-ring-shadow)] before:content-[''] after:absolute after:bottom-[17%] after:right-[20%] after:h-30 after:w-0.5 after:rotate-[35deg] after:bg-gradient-to-b after:from-(--lime) after:to-transparent after:opacity-35 after:content-[''] max-[900px]:min-h-0 max-[900px]:border-b max-[900px]:border-r-0 max-[900px]:px-6 max-[900px]:py-7.5 max-[900px]:pb-11.5 max-[520px]:px-4.5 max-[520px]:pb-8.5"
       aria-labelledby="auth-story-title"
     >
       <div className="relative z-1 flex items-center gap-2.5">

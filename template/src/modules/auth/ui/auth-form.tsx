@@ -113,14 +113,14 @@ export function AuthForm({ intent }: AuthFormProps) {
 
         {state.status === "error" && state.message ? (
           <div
-            className="flex items-start gap-2 rounded-xl border border-[rgba(255,131,109,0.25)] bg-[rgba(255,131,109,0.08)] px-3 py-2.75 text-[0.76rem] leading-[1.5] text-[#ffb6a9]"
+            className="flex items-start gap-2 rounded-xl border border-(--danger-border) bg-(--danger-bg) px-3 py-2.75 text-[0.76rem] leading-[1.5] text-(--danger-text)"
             role="alert"
           >
             {state.message}
           </div>
         ) : null}
         {state.status === "success" && state.message ? (
-          <output className="flex items-start gap-2 rounded-xl border border-[rgba(215,255,79,0.2)] bg-[rgba(215,255,79,0.08)] px-3 py-2.75 text-[0.76rem] leading-[1.5] text-[#d9ef9b]">
+          <output className="flex items-start gap-2 rounded-xl border border-(--success-border) bg-(--success-bg) px-3 py-2.75 text-[0.76rem] leading-[1.5] text-(--success-text)">
             <Check className="h-4 w-4 shrink-0" aria-hidden="true" />
             <span>{state.message}</span>
           </output>

@@ -36,9 +36,27 @@
   --line: rgba(222, 232, 213, 0.1);
   --line-strong: rgba(222, 232, 213, 0.18);
   --lime: #d7ff4f;
+  --lime-hover: #e5ff84;
+  --lime-ink: #101310;
   --orange: #ffb95e;
   --red: #ff836d;
   --blue: #91b8ff;
+  --surface-card: rgba(29, 35, 29, 0.82);
+  --surface-input: rgba(16, 19, 16, 0.72);
+  --surface-segment: rgba(16, 19, 16, 0.65);
+  --success-bg: rgba(215, 255, 79, 0.08);
+  --success-border: rgba(215, 255, 79, 0.2);
+  --success-text: #d9ef9b;
+  --danger-bg: rgba(255, 131, 109, 0.08);
+  --danger-border: rgba(255, 131, 109, 0.25);
+  --danger-text: #ffb6a9;
+  --focus-ring: rgba(215, 255, 79, 0.16);
+  --glow-lime: rgba(215, 255, 79, 0.08);
+  --glow-blue: rgba(145, 184, 255, 0.08);
+  --story-ring: rgba(215, 255, 79, 0.13);
+  --story-ring-shadow: rgba(215, 255, 79, 0.025);
+  --card-shadow: 0 20px 70px rgba(0, 0, 0, 0.2);
+  --button-shadow: 0 10px 30px rgba(215, 255, 79, 0.12);
   --radius: 0.9rem;
   --background: var(--deep);
   --foreground: var(--ink);
@@ -47,7 +65,7 @@
   --popover: var(--deep-raised);
   --popover-foreground: var(--ink);
   --primary: var(--lime);
-  --primary-foreground: #101310;
+  --primary-foreground: var(--lime-ink);
   --secondary: var(--deep-soft);
   --secondary-foreground: var(--ink);
   --muted: var(--deep-soft);
@@ -55,10 +73,66 @@
   --accent: var(--deep-soft);
   --accent-foreground: var(--ink);
   --destructive: var(--red);
-  --destructive-foreground: #101310;
+  --destructive-foreground: var(--lime-ink);
   --border: var(--line);
   --input: var(--line-strong);
   --ring: var(--lime);
+  color-scheme: dark;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --deep: #f4f7ef;
+    --deep-soft: #e8eee0;
+    --deep-raised: #ffffff;
+    --ink: #182117;
+    --ink-muted: #566253;
+    --ink-faint: #778272;
+    --line: rgba(24, 33, 23, 0.12);
+    --line-strong: rgba(24, 33, 23, 0.2);
+    --lime: #b5df21;
+    --lime-hover: #a7d516;
+    --lime-ink: #172014;
+    --orange: #b96b16;
+    --red: #c94b3d;
+    --blue: #376fc7;
+    --surface-card: rgba(255, 255, 255, 0.9);
+    --surface-input: rgba(255, 255, 255, 0.92);
+    --surface-segment: rgba(232, 238, 224, 0.86);
+    --success-bg: rgba(111, 149, 0, 0.12);
+    --success-border: rgba(94, 128, 0, 0.32);
+    --success-text: #4d6800;
+    --danger-bg: rgba(201, 75, 61, 0.1);
+    --danger-border: rgba(182, 60, 48, 0.3);
+    --danger-text: #a23b31;
+    --focus-ring: rgba(111, 149, 0, 0.3);
+    --glow-lime: rgba(181, 223, 33, 0.18);
+    --glow-blue: rgba(55, 111, 199, 0.1);
+    --story-ring: rgba(94, 128, 0, 0.2);
+    --story-ring-shadow: rgba(94, 128, 0, 0.045);
+    --card-shadow: 0 20px 70px rgba(37, 57, 29, 0.12);
+    --button-shadow: 0 10px 30px rgba(111, 149, 0, 0.2);
+    --background: var(--deep);
+    --foreground: var(--ink);
+    --card: var(--deep-raised);
+    --card-foreground: var(--ink);
+    --popover: var(--deep-raised);
+    --popover-foreground: var(--ink);
+    --primary: var(--lime);
+    --primary-foreground: var(--lime-ink);
+    --secondary: var(--deep-soft);
+    --secondary-foreground: var(--ink);
+    --muted: var(--deep-soft);
+    --muted-foreground: var(--ink-muted);
+    --accent: var(--deep-soft);
+    --accent-foreground: var(--ink);
+    --destructive: var(--red);
+    --destructive-foreground: #ffffff;
+    --border: var(--line);
+    --input: var(--line-strong);
+    --ring: var(--lime);
+    color-scheme: light;
+  }
 }
 
 @layer base {
@@ -107,6 +181,6 @@
 
   ::selection {
     background: var(--lime);
-    color: #1b2310;
+    color: var(--lime-ink);
   }
 }

@@ -22,7 +22,7 @@ type AuthEntryProps = Readonly<{
 
 export function AuthEntry({ children }: AuthEntryProps) {
   return (
-    <main className="grid min-h-screen grid-cols-[minmax(0,1.05fr)_minmax(420px,0.95fr)] bg-[radial-gradient(circle_at_13%_18%,rgba(215,255,79,0.08),transparent_26rem),radial-gradient(circle_at_85%_84%,rgba(145,184,255,0.08),transparent_22rem),var(--deep)] max-[900px]:block">
+    <main className="grid min-h-screen grid-cols-[minmax(0,1.05fr)_minmax(420px,0.95fr)] bg-[radial-gradient(circle_at_13%_18%,var(--glow-lime),transparent_26rem),radial-gradient(circle_at_85%_84%,var(--glow-blue),transparent_22rem),var(--deep)] max-[900px]:block">
       {children}
 
       <section
@@ -32,7 +32,7 @@ export function AuthEntry({ children }: AuthEntryProps) {
         <Card className="w-full max-w-117.5">
           <CardHeader className="gap-3 pb-5">
             <div className="flex items-center justify-between gap-4">
-              <div className="grid h-9.5 w-9.5 place-items-center rounded-xl border border-[rgba(215,255,79,0.22)] bg-[rgba(215,255,79,0.1)] text-(--lime)">
+              <div className="grid h-9.5 w-9.5 place-items-center rounded-xl border border-(--success-border) bg-(--success-bg) text-(--lime)">
                 <LockKeyhole className="h-4 w-4" />
               </div>
               <Badge variant="success">Live accounts</Badge>
