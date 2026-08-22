@@ -6,84 +6,52 @@ type StudioSound =
   | "enter"
   | "select"
   | "deselect"
+  | "complete"
   | "advance"
   | "captain"
   | "lock"
   | "reveal"
   | "back";
 
-function playNote(
-  context: AudioContext,
-  frequency: number,
-  start: number,
-  duration: number,
-  volume: number,
-) {
-  const oscillator = context.createOscillator();
-  const gain = context.createGain();
+const soundSources: Record<StudioSound, string> = {
+  enter: "/audio/studio/forward.mp3",
+  select: "/audio/studio/select.mp3",
+  deselect: "/audio/studio/deselect.mp3",
+  complete: "/audio/studio/complete.mp3",
+  advance: "/audio/studio/forward.mp3",
+  captain: "/audio/studio/captain.mp3",
+  lock: "/audio/studio/complete.mp3",
+  reveal: "/audio/studio/reveal.mp3",
+  back: "/audio/studio/back.mp3",
+};
 
-  oscillator.type = "sine";
-  oscillator.frequency.setValueAtTime(frequency, start);
-  gain.gain.setValueAtTime(volume, start);
-  gain.gain.exponentialRampToValueAtTime(0.001, start + duration);
-  oscillator.connect(gain);
-  gain.connect(context.destination);
-  oscillator.start(start);
-  oscillator.stop(start + duration + 0.02);
+function createAudio(source: string) {
+  const audio = new Audio(source);
+  audio.preload = "auto";
+  audio.volume = 0.42;
+  return audio;
 }
 
 export function useStudioSound() {
-  const audioContext = useRef<AudioContext | null>(null);
+  const audioElements = useRef<Partial<Record<StudioSound, HTMLAudioElement>>>({});
   const [enabled, setEnabled] = useState(true);
 
-  function getContext() {
-    if (!enabled || typeof window === "undefined" || !("AudioContext" in window)) return null;
-    audioContext.current ??= new AudioContext();
-    if (audioContext.current.state === "suspended") void audioContext.current.resume();
-    return audioContext.current;
-  }
-
   function play(sound: StudioSound) {
-    const context = getContext();
-    if (!context) return;
+    if (!enabled || typeof window === "undefined") return;
 
-    const start = context.currentTime + 0.005;
-    const sequences: Record<StudioSound, Array<[number, number, number, number]>> = {
-      enter: [
-        [261.63, 0, 0.1, 0.025],
-        [392, 0.08, 0.16, 0.03],
-        [523.25, 0.16, 0.24, 0.035],
-      ],
-      select: [[440, 0, 0.08, 0.026]],
-      deselect: [[330, 0, 0.08, 0.018]],
-      advance: [
-        [392, 0, 0.08, 0.023],
-        [587.33, 0.07, 0.12, 0.028],
-      ],
-      captain: [
-        [349.23, 0, 0.1, 0.024],
-        [698.46, 0.08, 0.18, 0.032],
-      ],
-      lock: [
-        [392, 0, 0.09, 0.022],
-        [523.25, 0.07, 0.12, 0.026],
-        [783.99, 0.15, 0.24, 0.032],
-      ],
-      reveal: [
-        [261.63, 0, 0.12, 0.02],
-        [392, 0.1, 0.14, 0.024],
-        [659.25, 0.2, 0.34, 0.034],
-      ],
-      back: [[293.66, 0, 0.1, 0.018]],
-    };
-
-    sequences[sound].forEach(([frequency, offset, duration, volume]) => {
-      playNote(context, frequency, start + offset, duration, volume);
-    });
+    const audio = audioElements.current[sound] ?? createAudio(soundSources[sound]);
+    audioElements.current[sound] = audio;
+    audio.currentTime = 0;
+    void audio.play().catch(() => undefined);
   }
 
   function toggle() {
-    setEnabled((current) => !current);
+    setEnabled((current) => {
+      if (current) {
+        Object.values(audioElements.current).forEach((audio) => audio?.pause());
+      }
+      return !current;
+    });
   }
 
   return { enabled, play, toggle };

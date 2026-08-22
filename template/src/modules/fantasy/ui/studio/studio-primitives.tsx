@@ -144,7 +144,7 @@ export function StudioAction({
 }>) {
   return (
     <Button
-      className="min-w-52 rounded-full text-[1rem]"
+      className="h-12 min-w-52 rounded-full px-6 text-[1rem]"
       disabled={disabled}
       onClick={onClick}
       variant={variant}
@@ -194,9 +194,10 @@ export function PlayerCard({
   return (
     <button
       className={cn(
-        "group relative flex min-w-52 items-center gap-3 rounded-3xl border border-(--line) bg-(--deep-soft) p-3 text-left transition-[transform,border-color,background-color,box-shadow] duration-200 hover:-translate-y-1 hover:border-(--accent-border) hover:bg-(--accent-soft) active:scale-[0.98]",
+        "group relative flex min-h-24 min-w-52 items-center gap-3 rounded-3xl border border-(--line) bg-(--deep-soft) p-4 text-left transition-[transform,border-color,background-color,box-shadow] duration-200 hover:-translate-y-1 hover:border-(--accent-border) hover:bg-(--accent-soft) active:scale-[0.98]",
         selected && "border-(--accent-border) bg-(--accent-soft) shadow-[var(--button-shadow)]",
       )}
+      aria-pressed={selected}
       onClick={onSelect}
       type="button"
     >
@@ -239,6 +240,7 @@ export function CaptainCard({
         active &&
           "border-(--lime) bg-(--accent-soft) shadow-[0_0_0_4px_var(--accent-soft),var(--button-shadow)]",
       )}
+      aria-pressed={active}
       onClick={onSelect}
       type="button"
     >

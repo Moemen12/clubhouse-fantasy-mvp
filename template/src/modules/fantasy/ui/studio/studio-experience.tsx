@@ -3,9 +3,11 @@
 import { useEffect, useState } from "react";
 import {
   Activity,
+  AlertCircle,
   ArrowDown,
   ArrowLeft,
   ArrowRight,
+  Check,
   Crown,
   Expand,
   Focus,
@@ -16,8 +18,17 @@ import {
 
 import { Button } from "@/shared/frontend/ui";
 
-import { BUDGET_LIMIT, calculateTeamScore, getPlayer, getSquadCost } from "../../domain";
-import type { Player, PlayerPosition, TeamState } from "../../domain";
+import {
+  BUDGET_LIMIT,
+  calculateTeamScore,
+  getFormationMessage,
+  getFormationStatus,
+  getPlayer,
+  getSquadCost,
+  REQUIRED_FORMATION,
+  SQUAD_LIMIT,
+} from "../../domain";
+import type { FormationStatus, Player, PlayerPosition, TeamState } from "../../domain";
 import { fantasyPlayers } from "../demo-data";
 import {
   BackAction,
@@ -188,12 +199,90 @@ function EntryStage({ managerName, onEnter }: { managerName: string; onEnter: ()
   );
 }
 
+const formationOrder: PlayerPosition[] = ["GK", "DEF", "MID", "FWD"];
+
+function FormationCheck({ status }: { status: FormationStatus }) {
+  return (
+    <div className="shrink-0 rounded-3xl border border-(--line) bg-(--deep-soft) px-4 py-3 md:px-5">
+      <div className="flex items-center justify-between gap-4">
+        <div className="flex items-center gap-3">
+          <span
+            className={
+              status.isValid
+                ? "grid h-8 w-8 place-items-center rounded-full bg-(--lime) text-(--lime-ink)"
+                : "grid h-8 w-8 place-items-center rounded-full bg-(--orange-border) text-(--orange)"
+            }
+          >
+            {status.isValid ? <Check size={16} /> : <AlertCircle size={16} />}
+          </span>
+          <div>
+            <p className="text-[0.62rem] font-extrabold uppercase tracking-[0.16em] text-(--ink-faint)">
+              Formation check
+            </p>
+            <strong className="mt-1 block text-[0.9rem] tracking-[-0.03em]">
+              {status.isValid ? "Shape is ready." : "Build a legal shape."}
+            </strong>
+          </div>
+        </div>
+        <span
+          className={
+            status.isValid
+              ? "text-[0.72rem] font-black uppercase tracking-[0.12em] text-(--lime)"
+              : "text-[0.72rem] font-black uppercase tracking-[0.12em] text-(--orange)"
+          }
+        >
+          {status.isValid ? "Ready" : "Adjust"}
+        </span>
+      </div>
+      <div className="mt-3 grid grid-cols-4 gap-2">
+        {formationOrder.map((position) => {
+          const count = status.counts[position];
+          const required = REQUIRED_FORMATION[position];
+          const complete = count === required;
+          return (
+            <div
+              className={`rounded-2xl border px-2 py-2 text-center ${complete ? "border-(--accent-border) bg-(--accent-soft)" : "border-(--orange-border) bg-(--danger-bg)"}`}
+              key={position}
+            >
+              <span className="block text-[0.58rem] font-extrabold uppercase tracking-[0.1em] text-(--ink-faint)">
+                {position}
+              </span>
+              <strong
+                className={`mt-1 block text-[0.94rem] ${complete ? "text-(--lime)" : "text-(--orange)"}`}
+              >
+                {count}/{required}
+              </strong>
+            </div>
+          );
+        })}
+      </div>
+      <p
+        className={
+          status.isValid
+            ? "mt-3 text-[0.72rem] text-(--lime)"
+            : "mt-3 text-[0.72rem] text-(--orange)"
+        }
+      >
+        {getFormationMessage(status)}
+      </p>
+    </div>
+  );
+}
+
+function getScoutActionLabel(selectedCount: number, formationIsValid: boolean) {
+  if (selectedCount < SQUAD_LIMIT) return `Choose ${SQUAD_LIMIT - selectedCount} more`;
+  if (formationIsValid) return "Review your squad";
+  return "Fix formation";
+}
+
 function ScoutStage({
   selectedIds,
+  formationStatus,
   onTogglePlayer,
   onReview,
 }: {
   selectedIds: string[];
+  formationStatus: FormationStatus;
   onTogglePlayer: (playerId: string) => void;
   onReview: () => void;
 }) {
@@ -206,7 +295,7 @@ function ScoutStage({
           title="Find your five."
         />
         <div className="flex items-center gap-4">
-          <Metric label="Squad" value={`${selectedIds.length} / 5`} />
+          <Metric label="Squad" value={`${selectedIds.length} / ${SQUAD_LIMIT}`} />
           <Metric
             label="Budget"
             tone="blue"
@@ -214,24 +303,30 @@ function ScoutStage({
           />
         </div>
       </div>
-      <div className="mt-4 min-h-0 flex-1 overflow-x-auto pb-2 [scrollbar-width:none]">
-        <div className="flex h-full min-w-max items-center gap-3 pr-8 md:gap-4">
-          {scoutingPool.map((player) => (
-            <PlayerCard
-              key={player.id}
-              onSelect={() => onTogglePlayer(player.id)}
-              player={player}
-              selected={selectedIds.includes(player.id)}
-            />
-          ))}
+      <div className="mt-4 flex min-h-0 flex-1 flex-col overflow-hidden">
+        <FormationCheck status={formationStatus} />
+        <div className="mt-3 min-h-0 flex-1 overflow-x-auto pb-2 [scrollbar-width:none]">
+          <div className="flex h-full min-w-max items-center gap-3 pr-8 md:gap-4">
+            {scoutingPool.map((player) => (
+              <PlayerCard
+                key={player.id}
+                onSelect={() => onTogglePlayer(player.id)}
+                player={player}
+                selected={selectedIds.includes(player.id)}
+              />
+            ))}
+          </div>
         </div>
       </div>
       <div className="flex shrink-0 flex-wrap items-center justify-between gap-4 border-t border-(--line) pt-5">
         <StudioHint>
           <ArrowDown size={13} /> Your picks travel with you.
         </StudioHint>
-        <StudioAction disabled={selectedIds.length !== 5} onClick={onReview}>
-          {selectedIds.length === 5 ? "Review your squad" : `Choose ${5 - selectedIds.length} more`}
+        <StudioAction
+          disabled={selectedIds.length !== SQUAD_LIMIT || !formationStatus.isValid}
+          onClick={onReview}
+        >
+          {getScoutActionLabel(selectedIds.length, formationStatus.isValid)}
         </StudioAction>
       </div>
     </div>
@@ -267,7 +362,7 @@ function SquadStage({
             selectedPlayers={selectedPlayers}
           />
         </div>
-        <aside className="flex min-h-0 flex-col rounded-[28px] border border-(--line) bg-(--deep-soft) p-5 md:p-6">
+        <aside className="flex min-h-0 max-h-44 flex-col rounded-[28px] border border-(--line) bg-(--deep-soft) p-4 md:max-h-none md:p-6">
           <div className="flex items-start justify-between gap-3">
             <div>
               <p className="text-[0.57rem] font-extrabold uppercase tracking-[0.17em] text-(--ink-faint)">
@@ -342,7 +437,7 @@ function CaptainStage({
 }) {
   return (
     <div className="flex min-h-0 flex-1 flex-col items-center px-5 py-4 md:px-10 md:py-6">
-      <div className="flex w-full shrink-0 items-center justify-between gap-4">
+      <div className="flex w-full shrink-0 flex-wrap items-center justify-between gap-3">
         <BackAction label="Back to squad" onClick={onBack} />
         <StudioHint>
           <Crown size={13} /> One conviction gets 2×
@@ -466,17 +561,29 @@ export function StudioExperience({ managerName = "Marcus Khan" }: StudioExperien
     const player = fantasyPlayers.find((candidate) => candidate.id === playerId);
     return player ? [player] : [];
   });
+  const formationStatus = getFormationStatus(
+    { selectedPlayerIds: selectedIds, captainId: null },
+    fantasyPlayers,
+  );
   const team: TeamState = { selectedPlayerIds: selectedIds, captainId };
 
   function togglePlayer(playerId: string) {
-    studioSound.play(selectedIds.includes(playerId) ? "deselect" : "select");
+    const isSelected = selectedIds.includes(playerId);
+    const nextCount = isSelected ? selectedIds.length - 1 : selectedIds.length + 1;
+    if (isSelected) {
+      studioSound.play("deselect");
+    } else if (nextCount === SQUAD_LIMIT) {
+      studioSound.play("complete");
+    } else {
+      studioSound.play("select");
+    }
     setSelectedIds((current) => {
       if (current.includes(playerId)) {
         const next = current.filter((id) => id !== playerId);
         if (playerId === captainId) setCaptainId(next[0] ?? "");
         return next;
       }
-      if (current.length >= 5) return current;
+      if (current.length >= SQUAD_LIMIT) return current;
       return [...current, playerId];
     });
   }
@@ -548,6 +655,7 @@ export function StudioExperience({ managerName = "Marcus Khan" }: StudioExperien
             <StageDots stage={stage} />
           </div>
           <ScoutStage
+            formationStatus={formationStatus}
             onReview={reviewSquad}
             onTogglePlayer={togglePlayer}
             selectedIds={selectedIds}

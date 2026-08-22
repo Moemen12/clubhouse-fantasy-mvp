@@ -1,6 +1,13 @@
 export const SQUAD_LIMIT = 5;
 export const BUDGET_LIMIT = 50;
 
+export const REQUIRED_FORMATION: Record<PlayerPosition, number> = {
+  GK: 1,
+  DEF: 2,
+  MID: 1,
+  FWD: 1,
+};
+
 export type PlayerPosition = "GK" | "DEF" | "MID" | "FWD";
 
 export type Player = {
@@ -49,21 +56,65 @@ export function getPlayer(playerId: string, players: Player[]): Player | undefin
   return players.find((player) => player.id === playerId);
 }
 
+const positionNames: Record<PlayerPosition, string> = {
+  GK: "keeper",
+  DEF: "defender",
+  MID: "midfielder",
+  FWD: "forward",
+};
+
+export type FormationStatus = {
+  counts: Record<PlayerPosition, number>;
+  missing: PlayerPosition[];
+  excess: PlayerPosition[];
+  isValid: boolean;
+};
+
+export function getFormationStatus(team: TeamState, players: Player[]): FormationStatus {
+  const counts: Record<PlayerPosition, number> = { GK: 0, DEF: 0, MID: 0, FWD: 0 };
+
+  team.selectedPlayerIds.forEach((playerId) => {
+    const position = getPlayer(playerId, players)?.position;
+    if (position) counts[position] += 1;
+  });
+
+  const positions = Object.keys(REQUIRED_FORMATION) as PlayerPosition[];
+  const missing = positions.flatMap((position) =>
+    Array.from(
+      { length: Math.max(0, REQUIRED_FORMATION[position] - counts[position]) },
+      () => position,
+    ),
+  );
+  const excess = positions.flatMap((position) =>
+    Array.from(
+      { length: Math.max(0, counts[position] - REQUIRED_FORMATION[position]) },
+      () => position,
+    ),
+  );
+
+  return { counts, missing, excess, isValid: missing.length === 0 && excess.length === 0 };
+}
+
 export function isTeamComplete(team: TeamState, players: Player[]): boolean {
   if (team.selectedPlayerIds.length !== SQUAD_LIMIT || !team.captainId) {
     return false;
   }
 
-  const positions = team.selectedPlayerIds.map(
-    (playerId) => getPlayer(playerId, players)?.position,
-  );
+  return getFormationStatus(team, players).isValid;
+}
 
-  return (
-    positions.filter((position) => position === "GK").length === 1 &&
-    positions.filter((position) => position === "DEF").length === 2 &&
-    positions.filter((position) => position === "MID").length === 1 &&
-    positions.filter((position) => position === "FWD").length === 1
-  );
+export function getFormationMessage(status: FormationStatus): string {
+  if (status.isValid) return "Formation is locked: 1 keeper, 2 defenders, 1 midfielder, 1 forward.";
+
+  const missingLabels = status.missing.map((position) => positionNames[position]);
+  const excessLabels = status.excess.map((position) => positionNames[position]);
+
+  if (missingLabels.length > 0 && excessLabels.length > 0) {
+    return `Need ${missingLabels.join(", ")}; remove one ${excessLabels[0]}.`;
+  }
+  if (missingLabels.length > 0)
+    return `Need ${missingLabels.join(", ")} to complete the formation.`;
+  return `Remove an extra ${excessLabels[0]} to complete the formation.`;
 }
 
 export function getValidationMessage(team: TeamState, players: Player[]): string | null {
@@ -81,8 +132,9 @@ export function getValidationMessage(team: TeamState, players: Player[]): string
     return `Add ${SQUAD_LIMIT - team.selectedPlayerIds.length} more players to complete your squad.`;
   }
 
-  if (!isTeamComplete(team, players)) {
-    return "Your squad needs 1 goalkeeper, 2 defenders, 1 midfielder, and 1 striker.";
+  const formation = getFormationStatus(team, players);
+  if (!formation.isValid) {
+    return getFormationMessage(formation);
   }
 
   if (!team.captainId) {
