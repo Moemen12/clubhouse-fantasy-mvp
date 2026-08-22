@@ -1,4 +1,4 @@
-import { startTransition, useActionState, useEffect, useEffectEvent } from "react";
+import { startTransition, useActionState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ArrowRight, Check } from "lucide-react";
 import { useForm } from "react-hook-form";
@@ -28,8 +28,15 @@ const authClient = createAuthClient();
 export function AuthForm({ intent, onAuthenticated }: AuthFormProps) {
   const isSignUp = intent === "sign-up";
   const [state, formAction, isPending] = useActionState(
-    (previousState: typeof initialAuthActionState, formData: FormData) =>
-      submitAuthForm(authClient, intent, previousState, formData),
+    async (previousState: typeof initialAuthActionState, formData: FormData) => {
+      const nextState = await submitAuthForm(authClient, intent, previousState, formData);
+
+      if (nextState.status === "success" && nextState.user) {
+        onAuthenticated();
+      }
+
+      return nextState;
+    },
     initialAuthActionState,
   );
   const form = useForm<AuthInput>({
@@ -42,11 +49,6 @@ export function AuthForm({ intent, onAuthenticated }: AuthFormProps) {
       displayName: "",
     },
   });
-  const handleAuthenticated = useEffectEvent(onAuthenticated);
-
-  useEffect(() => {
-    if (state.user) handleAuthenticated();
-  }, [state.user]);
 
   function handleSubmit(values: AuthInput) {
     const formData = new FormData();

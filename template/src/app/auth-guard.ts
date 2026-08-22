@@ -15,7 +15,7 @@ type PendingCookie = {
 
 function isProtectedPath(pathname: string): boolean {
   return (PROTECTED_ROUTES as readonly string[]).some(
-    (route) => pathname === route || pathname.startsWith(`${route}/`)
+    (route) => pathname === route || pathname.startsWith(`${route}/`),
   );
 }
 
@@ -23,7 +23,11 @@ function isPublicPath(pathname: string): boolean {
   return (PUBLIC_ROUTES as readonly string[]).includes(pathname);
 }
 
-function getRedirectDestination(request: NextRequest, pathname: string, isAuthenticated: boolean): URL | null {
+function getRedirectDestination(
+  request: NextRequest,
+  pathname: string,
+  isAuthenticated: boolean,
+): URL | null {
   if (!isAuthenticated && isProtectedPath(pathname)) {
     return new URL(ROUTES.AUTH.ROOT, request.url);
   }
@@ -38,7 +42,7 @@ function getRedirectDestination(request: NextRequest, pathname: string, isAuthen
 function applySessionState(
   response: NextResponse,
   pendingCookies: PendingCookie[],
-  cacheHeaders: Record<string, string>
+  cacheHeaders: Record<string, string>,
 ) {
   pendingCookies.forEach(({ name, value, options }) => {
     response.cookies.set(name, value, options);
