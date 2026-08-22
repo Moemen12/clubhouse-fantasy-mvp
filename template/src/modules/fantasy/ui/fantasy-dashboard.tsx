@@ -65,7 +65,7 @@ function PlayerAvatar({ player, small = false }: { player: Player; small?: boole
     <span
       aria-hidden="true"
       className={cn(
-        "grid shrink-0 place-items-center rounded-3.5 border-0.75 border-[rgba(10,14,10,0.45)] font-black tracking-[-0.04em] text-[#1b2310] shadow-[0_5px_13px_rgba(0,0,0,0.18)]",
+        "grid shrink-0 place-items-center rounded-3.5 border-0.75 border-(--avatar-border) font-black tracking-[-0.04em] text-(--avatar-ink) shadow-[var(--avatar-shadow)]",
         small ? "h-8.5 w-8.5 rounded-2.5 border-2 text-[0.56rem]" : "h-11.75 w-11.75 text-[0.7rem]",
       )}
       style={{ background: player.color }}
@@ -87,8 +87,8 @@ function PlayerRow({
   return (
     <button
       className={cn(
-        "flex w-full items-center gap-2.5 border-b border-[rgba(222,232,213,0.07)] bg-transparent px-6.5 py-2.5 text-left text-(--ink) transition-colors hover:bg-[rgba(215,255,79,0.05)] max-175:gap-2 max-175:px-4.5",
-        selected && "bg-[rgba(215,255,79,0.05)]",
+        "flex w-full items-center gap-2.5 border-b border-(--line-subtle) bg-transparent px-6.5 py-2.5 text-left text-(--ink) transition-colors hover:bg-(--accent-soft) max-175:gap-2 max-175:px-4.5",
+        selected && "bg-(--accent-soft)",
       )}
       onClick={onToggle}
       type="button"
@@ -111,8 +111,8 @@ function PlayerRow({
       <span className="min-w-9.5 text-[0.65rem] text-(--ink-muted)">{player.price} cr</span>
       <span
         className={cn(
-          "grid h-6.75 w-6.75 shrink-0 place-items-center rounded-full border border-[rgba(215,255,79,0.24)] text-(--lime)",
-          selected && "bg-(--lime) text-[#202817]",
+          "grid h-6.75 w-6.75 shrink-0 place-items-center rounded-full border border-(--accent-border) text-(--lime)",
+          selected && "bg-(--lime) text-(--lime-ink)",
         )}
       >
         {selected ? <Check size={16} strokeWidth={3} /> : <Plus size={17} strokeWidth={2.5} />}
@@ -132,7 +132,7 @@ function PitchSlot({
 }) {
   if (!player) {
     return (
-      <div className="flex min-h-22.25 min-w-18.75 flex-col items-center justify-center gap-1 rounded-2.25 border border-dashed border-[rgba(215,255,79,0.28)] text-[0.55rem] uppercase text-[rgba(215,255,79,0.5)]">
+      <div className="flex min-h-22.25 min-w-18.75 flex-col items-center justify-center gap-1 rounded-2.25 border border-dashed border-(--pitch-border) text-[0.55rem] uppercase text-(--pitch-label)">
         <span className="text-[1.2rem] font-light">+</span>
         <span>Open slot</span>
       </div>
@@ -146,14 +146,13 @@ function PitchSlot({
       type="button"
     >
       {captain && (
-        <span className="absolute right-0 -top-2.25 z-2 grid h-4.5 w-4.5 place-items-center rounded-full bg-(--lime) text-[0.6rem] font-black text-[#202817]">
+        <span className="absolute right-0 -top-2.25 z-2 grid h-4.5 w-4.5 place-items-center rounded-full bg-(--lime) text-[0.6rem] font-black text-(--lime-ink)">
           C
         </span>
       )}
       <span
         className={cn(
-          captain &&
-            "rounded-4 shadow-[0_0_0_3px_rgba(215,255,79,0.12),0_5px_16px_rgba(0,0,0,0.18)]",
+          captain && "rounded-4 shadow-[0_0_0_3px_var(--accent-soft),var(--avatar-shadow)]",
         )}
       >
         <PlayerAvatar player={player} />
@@ -161,9 +160,7 @@ function PitchSlot({
       <span className="mt-1.5 max-w-22 overflow-hidden text-ellipsis whitespace-nowrap text-[0.64rem] font-bold">
         {player.name}
       </span>
-      <span className="mt-0.5 text-[0.55rem] font-extrabold text-[rgba(215,255,79,0.7)]">
-        {player.position}
-      </span>
+      <span className="mt-0.5 text-[0.55rem] font-extrabold text-(--lime)">{player.position}</span>
     </button>
   );
 }
@@ -240,11 +237,11 @@ export function FantasyDashboard({ managerName = "Marcus Khan" }: FantasyDashboa
   }
 
   const navButton =
-    "flex w-full items-center gap-3 rounded-2.25 bg-transparent px-3 py-2.75 text-left text-[0.79rem] font-semibold text-(--ink-muted) transition-colors hover:bg-[rgba(215,255,79,0.07)] hover:text-(--ink) active:scale-[0.98]";
+    "flex w-full items-center gap-3 rounded-2.25 bg-transparent px-3 py-2.75 text-left text-[0.79rem] font-semibold text-(--sidebar-muted) transition-colors hover:bg-(--sidebar-hover) hover:text-(--sidebar-foreground) active:scale-[0.98]";
 
   return (
-    <main className="flex min-h-screen bg-[radial-gradient(circle_at_80%_0%,rgba(155,211,40,0.06),transparent_27rem),var(--deep)] text-(--ink)">
-      <aside className="fixed inset-y-0 left-0 z-5 flex w-62 flex-col border-r border-(--line) bg-[rgba(15,18,15,0.92)] px-5 py-8.5 max-215:static max-215:h-auto max-215:w-full max-215:flex-row max-215:items-center max-215:justify-between max-215:border-b max-215:border-r-0 max-215:px-[5vw] max-215:py-4.25">
+    <main className="flex min-h-screen bg-[radial-gradient(circle_at_80%_0%,var(--glow-lime),transparent_27rem),var(--deep)] text-(--ink)">
+      <aside className="fixed inset-y-0 left-0 z-5 flex w-62 flex-col border-r border-(--line) bg-(--surface-sidebar) text-(--sidebar-foreground) px-5 py-8.5 max-215:static max-215:h-auto max-215:w-full max-215:flex-row max-215:items-center max-215:justify-between max-215:border-b max-215:border-r-0 max-215:px-[5vw] max-215:py-4.25">
         <div className="flex items-center gap-2.5">
           <span className="relative inline-flex h-6.5 w-6.5 shrink-0 rotate-[-8deg] items-center justify-center rounded-[8px_8px_8px_2px] border border-(--lime) before:absolute before:left-1.25 before:top-1.25 before:h-1.25 before:w-1.25 before:rounded-full before:bg-(--lime) before:content-[''] after:absolute after:bottom-1.25 after:right-1.25 after:h-1.25 after:w-1.25 after:rounded-full after:bg-(--lime) after:content-['']">
             <span className="absolute left-2.5 top-2.5 h-1.25 w-1.25 rounded-full bg-(--lime)" />
@@ -263,7 +260,7 @@ export function FantasyDashboard({ managerName = "Marcus Khan" }: FantasyDashboa
             className={cn(
               navButton,
               activeNav === "Dashboard" &&
-                "bg-(--lime) text-[#202817] shadow-[0_8px_22px_rgba(215,255,79,0.12)] hover:bg-(--lime) hover:text-[#202817]",
+                "bg-(--lime) text-(--lime-ink) shadow-[var(--nav-shadow)] hover:bg-(--lime) hover:text-(--lime-ink)",
             )}
             onClick={() => goTo("Dashboard", "top")}
             type="button"
@@ -274,7 +271,7 @@ export function FantasyDashboard({ managerName = "Marcus Khan" }: FantasyDashboa
             className={cn(
               navButton,
               activeNav === "My team" &&
-                "bg-(--lime) text-[#202817] shadow-[0_8px_22px_rgba(215,255,79,0.12)] hover:bg-(--lime) hover:text-[#202817]",
+                "bg-(--lime) text-(--lime-ink) shadow-[var(--nav-shadow)] hover:bg-(--lime) hover:text-(--lime-ink)",
             )}
             onClick={() => goTo("My team", "team-builder")}
             type="button"
@@ -286,7 +283,7 @@ export function FantasyDashboard({ managerName = "Marcus Khan" }: FantasyDashboa
             className={cn(
               navButton,
               activeNav === "Leaderboard" &&
-                "bg-(--lime) text-[#202817] shadow-[0_8px_22px_rgba(215,255,79,0.12)] hover:bg-(--lime) hover:text-[#202817]",
+                "bg-(--lime) text-(--lime-ink) shadow-[var(--nav-shadow)] hover:bg-(--lime) hover:text-(--lime-ink)",
             )}
             onClick={() => goTo("Leaderboard", "leaderboard")}
             type="button"
@@ -302,8 +299,8 @@ export function FantasyDashboard({ managerName = "Marcus Khan" }: FantasyDashboa
         </nav>
 
         <div className="mt-auto flex flex-col gap-3.5 max-215:m-0">
-          <div className="flex items-center gap-2.5 rounded-2.75 border border-(--line) bg-gradient-to-br from-[rgba(215,255,79,0.08)] to-[rgba(215,255,79,0.015)] p-3 max-215:hidden">
-            <span className="grid h-7.25 w-7.25 place-items-center rounded-lg bg-[rgba(215,255,79,0.16)] text-(--lime)">
+          <div className="flex items-center gap-2.5 rounded-2.75 border border-(--line) bg-gradient-to-br from-(--accent-soft) to-transparent p-3 max-215:hidden">
+            <span className="grid h-7.25 w-7.25 place-items-center rounded-lg bg-(--accent-soft) text-(--lime)">
               <Sparkles size={16} />
             </span>
             <div>
@@ -318,7 +315,7 @@ export function FantasyDashboard({ managerName = "Marcus Khan" }: FantasyDashboa
             className="flex items-center gap-2.5 bg-transparent px-1 py-2 text-left text-(--ink)"
             type="button"
           >
-            <span className="grid h-7.5 w-7.5 place-items-center rounded-full bg-[#b6c7ff] text-[0.63rem] font-extrabold text-[#263452]">
+            <span className="grid h-7.5 w-7.5 place-items-center rounded-full bg-(--manager-avatar-bg) text-[0.63rem] font-extrabold text-(--manager-avatar-ink)">
               {getManagerInitials(managerName)}
             </span>
             <span className="flex flex-col gap-1">
@@ -340,8 +337,8 @@ export function FantasyDashboard({ managerName = "Marcus Khan" }: FantasyDashboa
             <strong className="font-semibold text-(--ink)">Dashboard</strong>
           </div>
           <div className="flex items-center gap-3">
-            <span className="inline-flex items-center gap-2 rounded-full border border-[rgba(215,255,79,0.18)] bg-[rgba(215,255,79,0.06)] px-2.75 py-2 text-[0.66rem] font-semibold text-[#cbd998] max-175:px-2 max-175:py-1.75 max-175:text-[0.59rem]">
-              <span className="h-1.5 w-1.5 rounded-full bg-(--lime) shadow-[0_0_0_4px_rgba(215,255,79,0.08)]" />{" "}
+            <span className="inline-flex items-center gap-2 rounded-full border border-(--accent-border) bg-(--accent-soft) px-2.75 py-2 text-[0.66rem] font-semibold text-(--success-text) max-175:px-2 max-175:py-1.75 max-175:text-[0.59rem]">
+              <span className="h-1.5 w-1.5 rounded-full bg-(--lime) shadow-[0_0_0_4px_var(--accent-soft)]" />{" "}
               Gameweek 04 is open
             </span>
             <button
@@ -397,11 +394,9 @@ export function FantasyDashboard({ managerName = "Marcus Khan" }: FantasyDashboa
               const tone =
                 ["text-(--lime)", "text-(--orange)", "text-(--blue)"][index] ?? "text-(--ink)";
               const ring =
-                [
-                  "border-[rgba(215,255,79,0.12)]",
-                  "border-[rgba(255,185,94,0.15)]",
-                  "border-[rgba(145,184,255,0.15)]",
-                ][index] ?? "border-(--line)";
+                ["border-(--accent-border)", "border-(--orange-border)", "border-(--blue-border)"][
+                  index
+                ] ?? "border-(--line)";
               return (
                 <div
                   className="relative min-h-30.75 overflow-hidden rounded-3.5 border border-(--line) bg-(--deep-soft) px-5.5 py-5 max-175:min-h-27"
@@ -462,11 +457,11 @@ export function FantasyDashboard({ managerName = "Marcus Khan" }: FantasyDashboa
                   </strong>
                 </div>
               </div>
-              <div className="relative mx-3.75 flex min-h-103.75 flex-col justify-between overflow-hidden rounded-2.75 border border-[rgba(215,255,79,0.16)] bg-[linear-gradient(90deg,transparent_49.8%,rgba(215,255,79,0.09)_50%,transparent_50.2%),linear-gradient(0deg,transparent_49.8%,rgba(215,255,79,0.09)_50%,transparent_50.2%),linear-gradient(105deg,rgba(63,87,40,0.45),rgba(39,65,44,0.72))] px-6 pb-7.75 pt-6 max-175:min-h-91.25 max-175:mx-2.5 max-175:px-3.5">
-                <div className="pointer-events-none absolute left-[9%] right-[9%] top-0 h-[19%] rounded-b-[50%] border border-b-0 border-[rgba(215,255,79,0.1)]" />
-                <div className="pointer-events-none absolute bottom-0 left-[9%] right-[9%] h-[19%] rounded-t-[50%] border border-b-0 border-[rgba(215,255,79,0.1)]" />
-                <div className="pointer-events-none absolute left-1/2 top-1/2 h-32.5 w-32.5 -translate-x-1/2 -translate-y-1/2 rounded-full border border-[rgba(215,255,79,0.12)]" />
-                <div className="absolute right-4.5 top-3.75 text-[0.58rem] font-extrabold tracking-[0.13em] text-[rgba(215,255,79,0.49)]">
+              <div className="relative mx-3.75 flex min-h-103.75 flex-col justify-between overflow-hidden rounded-2.75 border border-(--pitch-border) [background:linear-gradient(90deg,transparent_49.8%,var(--pitch-line)_50%,transparent_50.2%),linear-gradient(0deg,transparent_49.8%,var(--pitch-line)_50%,transparent_50.2%),var(--pitch-surface)] px-6 pb-7.75 pt-6 max-175:min-h-91.25 max-175:mx-2.5 max-175:px-3.5">
+                <div className="pointer-events-none absolute left-[9%] right-[9%] top-0 h-[19%] rounded-b-[50%] border border-b-0 border-(--pitch-line)" />
+                <div className="pointer-events-none absolute bottom-0 left-[9%] right-[9%] h-[19%] rounded-t-[50%] border border-b-0 border-(--pitch-line)" />
+                <div className="pointer-events-none absolute left-1/2 top-1/2 h-32.5 w-32.5 -translate-x-1/2 -translate-y-1/2 rounded-full border border-(--accent-border)" />
+                <div className="absolute right-4.5 top-3.75 text-[0.58rem] font-extrabold tracking-[0.13em] text-(--pitch-label)">
                   5—2—1—1
                 </div>
                 <div className="relative z-1 flex justify-center gap-[clamp(24px,8vw,80px)]">
@@ -532,13 +527,13 @@ export function FantasyDashboard({ managerName = "Marcus Khan" }: FantasyDashboa
               </div>
               <div className="flex items-center justify-between gap-5 px-6.5 pb-6.25 pt-4.75 max-175:block max-175:px-4.5">
                 <div className="flex items-center gap-2.5 text-[0.68rem] text-(--ink-faint) max-175:mb-3.75">
-                  <span className="grid h-5.25 w-5.25 place-items-center rounded-1.25 border border-[rgba(215,255,79,0.32)] text-[0.62rem] font-extrabold text-(--lime)">
+                  <span className="grid h-5.25 w-5.25 place-items-center rounded-1.25 border border-(--accent-border) text-[0.62rem] font-extrabold text-(--lime)">
                     C
                   </span>
                   <span>Select a player on the pitch to make them captain.</span>
                 </div>
                 <button
-                  className="inline-flex items-center justify-center gap-2 rounded-lg bg-(--lime) px-4 py-3 text-[0.72rem] font-extrabold text-[#202817] transition-transform hover:bg-[#e2ff75] active:scale-[0.98] disabled:cursor-not-allowed disabled:bg-[#424a35] disabled:text-[#8f9a7b] max-175:w-full"
+                  className="inline-flex items-center justify-center gap-2 rounded-lg bg-(--lime) px-4 py-3 text-[0.72rem] font-extrabold text-(--lime-ink) transition-transform hover:bg-(--lime-hover) active:scale-[0.98] disabled:cursor-not-allowed disabled:bg-(--disabled-bg) disabled:text-(--disabled-text) max-175:w-full"
                   disabled={Boolean(validationMessage)}
                   onClick={() => setSubmitted(true)}
                   type="button"
@@ -562,7 +557,7 @@ export function FantasyDashboard({ managerName = "Marcus Khan" }: FantasyDashboa
             <div
               className={cn(
                 panel,
-                "self-start p-6.25 [background:radial-gradient(circle_at_100%_0%,rgba(215,255,79,0.1),transparent_16rem),var(--deep-soft)]",
+                "self-start p-6.25 [background:radial-gradient(circle_at_100%_0%,var(--glow-lime),transparent_16rem),var(--deep-soft)]",
               )}
             >
               <div className="flex items-start justify-between gap-3.5">
@@ -574,7 +569,7 @@ export function FantasyDashboard({ managerName = "Marcus Khan" }: FantasyDashboa
                     {submitted ? "Your gameweek" : "Build your edge"}
                   </h2>
                 </div>
-                <span className="grid h-8.25 w-8.25 place-items-center rounded-2.25 bg-[rgba(215,255,79,0.12)] text-(--lime)">
+                <span className="grid h-8.25 w-8.25 place-items-center rounded-2.25 bg-(--accent-soft) text-(--lime)">
                   <BarChart3 size={18} />
                 </span>
               </div>
@@ -596,7 +591,7 @@ export function FantasyDashboard({ managerName = "Marcus Khan" }: FantasyDashboa
                 ["Current rank", submitted ? `#${userRank}` : "—"],
               ].map(([label, value]) => (
                 <div
-                  className="flex items-center justify-between border-b border-[rgba(222,232,213,0.06)] py-2.75 text-[0.7rem] text-(--ink-muted)"
+                  className="flex items-center justify-between border-b border-(--line-subtle) py-2.75 text-[0.7rem] text-(--ink-muted)"
                   key={label}
                 >
                   <span>{label}</span>
@@ -651,7 +646,7 @@ export function FantasyDashboard({ managerName = "Marcus Khan" }: FantasyDashboa
                           .join(" · ")}
                       </div>
                       {playerScore.captainMultiplier === 2 && (
-                        <span className="inline-flex items-center gap-1 rounded-1.25 border border-[rgba(215,255,79,0.32)] px-1.5 py-1 text-[0.55rem] font-extrabold text-(--lime) max-175:hidden">
+                        <span className="inline-flex items-center gap-1 rounded-1.25 border border-(--accent-border) px-1.5 py-1 text-[0.55rem] font-extrabold text-(--lime) max-175:hidden">
                           <Crown size={12} /> 2× captain
                         </span>
                       )}
@@ -681,11 +676,11 @@ export function FantasyDashboard({ managerName = "Marcus Khan" }: FantasyDashboa
                 </span>
               </div>
               <div className="flex flex-col gap-3.5 px-6.5 pb-4.25 max-175:px-4.5">
-                <label className="flex items-center gap-2 rounded-1.75 border border-(--line) px-3 py-2.5 text-(--ink-faint) focus-within:border-[rgba(215,255,79,0.55)]">
+                <label className="flex items-center gap-2 rounded-1.75 border border-(--line) px-3 py-2.5 text-(--ink-faint) focus-within:border-(--accent-border)">
                   <Search size={16} />
                   <span className="sr-only">Search players</span>
                   <input
-                    className="w-full border-0 bg-transparent text-[0.7rem] text-(--ink) outline-none placeholder:text-[#626a61]"
+                    className="w-full border-0 bg-transparent text-[0.7rem] text-(--ink) outline-none placeholder:text-(--ink-faint)"
                     onChange={(event) => setSearch(event.target.value)}
                     placeholder="Search by player or club"
                     value={search}
@@ -699,8 +694,8 @@ export function FantasyDashboard({ managerName = "Marcus Khan" }: FantasyDashboa
                   {positionFilters.map((option) => (
                     <button
                       className={cn(
-                        "shrink-0 rounded-1.25 bg-transparent px-2 py-1.5 text-[0.61rem] text-(--ink-faint) transition-colors hover:bg-[rgba(215,255,79,0.1)] hover:text-(--lime)",
-                        filter === option.value && "bg-[rgba(215,255,79,0.1)] text-(--lime)",
+                        "shrink-0 rounded-1.25 bg-transparent px-2 py-1.5 text-[0.61rem] text-(--ink-faint) transition-colors hover:bg-(--accent-soft) hover:text-(--lime)",
+                        filter === option.value && "bg-(--accent-soft) text-(--lime)",
                       )}
                       key={option.value}
                       onClick={() => setFilter(option.value)}
@@ -751,16 +746,16 @@ export function FantasyDashboard({ managerName = "Marcus Khan" }: FantasyDashboa
                 {leaderboard.map((entry) => (
                   <div
                     className={cn(
-                      "flex min-h-14.75 items-center gap-2 border-b border-[rgba(222,232,213,0.07)]",
+                      "flex min-h-14.75 items-center gap-2 border-b border-(--line-subtle)",
                       entry.name === "Your Clubhouse" &&
-                        "-mx-3 rounded-1.75 bg-[rgba(215,255,79,0.08)] px-3",
+                        "-mx-3 rounded-1.75 bg-(--accent-soft) px-3",
                     )}
                     key={entry.name}
                   >
                     <span
                       className={cn(
                         "grid h-5.75 w-5.75 place-items-center text-[0.65rem] font-extrabold text-(--ink-faint)",
-                        entry.rank === 1 && "rounded-full bg-[rgba(215,255,79,0.15)] text-(--lime)",
+                        entry.rank === 1 && "rounded-full bg-(--accent-soft) text-(--lime)",
                       )}
                     >
                       {entry.rank === 1 ? <Medal size={15} /> : entry.rank}
@@ -786,7 +781,7 @@ export function FantasyDashboard({ managerName = "Marcus Khan" }: FantasyDashboa
                 ))}
               </div>
               <button
-                className="mx-6.5 mb-6.25 mt-4.5 inline-flex w-[calc(100%-52px)] items-center justify-center gap-2 rounded-1.75 border border-(--line-strong) bg-transparent p-2.75 text-[0.66rem] text-(--ink-muted) hover:border-[rgba(215,255,79,0.5)] hover:text-(--lime) max-175:mx-4.5 max-175:w-[calc(100%-36px)]"
+                className="mx-6.5 mb-6.25 mt-4.5 inline-flex w-[calc(100%-52px)] items-center justify-center gap-2 rounded-1.75 border border-(--line-strong) bg-transparent p-2.75 text-[0.66rem] text-(--ink-muted) hover:border-(--accent-border) hover:text-(--lime) max-175:mx-4.5 max-175:w-[calc(100%-36px)]"
                 onClick={() => goTo("Leagues")}
                 type="button"
               >
