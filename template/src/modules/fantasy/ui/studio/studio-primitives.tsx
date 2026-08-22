@@ -14,7 +14,18 @@ import {
 } from "lucide-react";
 
 import { cn, ThemeToggle } from "@/shared/frontend";
-import { Button } from "@/shared/frontend/ui";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+  Button,
+} from "@/shared/frontend/ui";
 
 import type { Player, PlayerPosition } from "../../domain";
 
@@ -100,18 +111,37 @@ export function StudioHeader({
           {soundEnabled ? <Volume2 size={15} /> : <VolumeX size={15} />}
         </Button>
         <ThemeToggle className="h-10 w-10" />
-        <form action={logoutAction}>
-          <Button
-            aria-label="Log out of Clubhouse"
-            className="gap-2 rounded-full px-3 text-[0.82rem] text-(--red) hover:bg-(--danger-bg) hover:text-(--red)"
-            size="sm"
-            type="submit"
-            variant="ghost"
-          >
-            <LogOut size={14} />
-            <span className="hidden sm:inline">Log out</span>
-          </Button>
-        </form>
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <Button
+              aria-label="Log out of Clubhouse"
+              className="gap-2 rounded-full px-3 text-[0.82rem] text-(--red) hover:bg-(--danger-bg) hover:text-(--red)"
+              size="sm"
+              type="button"
+              variant="ghost"
+            >
+              <LogOut size={14} />
+              <span className="hidden sm:inline">Log out</span>
+            </Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Log out of Clubhouse?</AlertDialogTitle>
+              <AlertDialogDescription>
+                Your current Studio read will close, and you will return to the sign-in screen.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Stay signed in</AlertDialogCancel>
+              <form action={logoutAction}>
+                <AlertDialogAction type="submit">
+                  <LogOut size={15} />
+                  Log out
+                </AlertDialogAction>
+              </form>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
         {stage !== "entry" && (
           <Button
             className="gap-2 rounded-full px-3 text-[0.82rem]"

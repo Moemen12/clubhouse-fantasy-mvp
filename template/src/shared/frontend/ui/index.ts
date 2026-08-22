@@ -1,3 +1,16 @@
+export {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogOverlay,
+  AlertDialogPortal,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "./alert-dialog";
 export { Badge, badgeVariants, type BadgeProps } from "./badge";
 export { Button, buttonVariants, type ButtonProps } from "./button";
 export {
