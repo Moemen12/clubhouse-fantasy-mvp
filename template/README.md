@@ -1,15 +1,18 @@
-# Next.js Architecture Kit Template
+# Clubhouse
 
-A single-repository Next.js App Router project using the hybrid architecture from Next Architecture Kit.
+This directory contains the Clubhouse Next.js application. Clubhouse is a fantasy-football showcase built around a focused journey: authenticate, build a squad, choose a captain, submit a decision, and understand the resulting score.
 
-## Start
+## Start locally
 
 Use Node 22 LTS, Node 24 LTS, or Node 26+.
 
 ```bash
 npm ci
+cp .env.example .env.local
 npm run dev
 ```
+
+Before starting, set a real Supabase URL and publishable key in `.env.local`. Supabase Email provider confirmation must be disabled for the direct session-bearing sign-up flow.
 
 ## Validate
 
@@ -17,36 +20,49 @@ npm run dev
 npm run validate
 ```
 
-Validation runs the runtime guard, Biome, ESLint, TypeScript, dependency-graph rules, Secretlint, and the production build. After `npm ci`, the pre-commit hook scans staged contents automatically.
+Validation checks runtime support, Biome formatting, ESLint and SonarJS rules, TypeScript, dependency direction, server-only doors, public imports, staged secrets, required environment values, and the production build.
 
 ## Structure
 
 ```text
 src/
-├── app/                         # Next.js pages, Route Handlers, Server Actions
-├── adapters/next/               # Next-specific composition and delivery adapters
-├── modules/<feature>/
-│   ├── ui/                      # Optional React presentation
-│   ├── contracts/               # Optional DTOs and runtime schemas
-│   ├── domain/                  # Optional business rules
-│   ├── application/             # Use cases
-│   ├── ports/                   # Optional outbound contracts
-│   └── infrastructure/          # Optional concrete external adapters
-└── shared/                      # Small reusable primitives
+├── app/                         # Next.js pages, Proxy, and Server Actions
+├── adapters/next/               # Next-specific composition boundaries
+├── modules/
+│   ├── auth/                    # Authentication capability and UI
+│   └── fantasy/                 # Fantasy rules, demo data, and dashboard UI
+└── shared/
+    ├── kernel/                 # Pure shared values and route constants
+    ├── frontend/               # Browser-safe UI primitives
+    └── backend/                 # Server-side Supabase and environment helpers
 ```
 
-Do not create every folder automatically. Start with the smallest structure the feature needs and add a layer only when that responsibility appears. For example, a UI-only feature may contain only `ui/`; a database-backed feature may contain `application/`, `ports/`, and `infrastructure/`.
+Feature code is organized by responsibility. Domain code owns rules, application code orchestrates use cases, ports describe provider capabilities, infrastructure implements those ports, contracts describe serializable boundaries, and UI code owns presentation and client interaction.
 
-Next.js code belongs in `app` and `adapters/next`. Domain and application code must not import Next.js, React presentation, databases, or vendor SDKs. Other features use a feature’s public `index` entrypoint instead of private implementation files.
+Cross-feature consumers use public barrels instead of private implementation files. For example:
 
-Server-only doors are enforced automatically. Route Handlers and Server Actions import `server-only`, while public barrels such as `src/adapters/next/index.ts`, `src/shared/backend/index.ts`, and `src/modules/<feature>/infrastructure/index.ts` protect their internal implementations. ESLint requires consumers to use those barrels and prevents UI code from importing backend areas. Internal leaves do not repeat the marker when they can only be reached through a protected barrel. Run `npm run server-only:check` directly, or use `npm run validate`. Do not add `server-only` to portable domain, application, ports, contracts, or UI files.
+```ts
+import { FantasyDashboard } from "@/modules/fantasy/ui";
+import { AuthEntry, AuthStory } from "@/modules/auth";
+```
 
-## Add a feature
+Deep feature imports and arbitrary app-to-feature-UI imports fail through ESLint and the repository architecture checks. The direct import of the named authentication Server Action into `AuthForm` is the intentional Next.js exception required for `useActionState`.
 
-Create a feature under `src/modules/<feature>` and add only the layers it needs. Keep business rules in `domain`, orchestration in `application`, external contracts in `ports`, concrete implementations in `infrastructure`, and UI in `ui`. Connect infrastructure to the application in `src/adapters/next/composition`.
+## Authentication
 
-Use native `fetch` for HTTP unless an adapter has a clear reason to use another client. Keep database, authentication, queues, WebSockets, and vendor libraries behind infrastructure ports.
+The authentication form is a Client Component because it uses React Hook Form and `useActionState`. It imports the real Server Action directly. The Server Action validates the shared Zod contract, calls the server-side Supabase adapter, writes cookie-backed sessions, and redirects successful users to `/dashboard`.
+
+Proxy refreshes incoming Supabase sessions and owns route access decisions. The dashboard page performs a server-side claims and user check before rendering. No preview authentication or local-storage fallback exists.
 
 ## Environment
 
-Copy `.env.example` to `.env.local`. Read environment variables through `src/shared/backend/env.ts`; do not access `process.env` throughout the application.
+Required values are validated centrally before builds and at Node server boot:
+
+```env
+NEXT_PUBLIC_SUPABASE_URL=...
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=...
+```
+
+Never commit `.env.local`, service-role keys, real tokens, or other credentials.
+
+See the repository-level [`ARCHITECTURE.md`](../ARCHITECTURE.md) and [`PRODUCT_BRIEF.md`](../PRODUCT_BRIEF.md) for the detailed architecture and product scope.

@@ -1,176 +1,211 @@
-# Next Architecture Kit
+# Clubhouse Architecture
 
 ## Purpose
 
-Next Architecture Kit is an opinionated starter architecture for new Next.js App Router applications. It combines feature-oriented development with a restrained form of Clean Architecture. The initial mode is deliberately practical: it keeps related code together, minimizes ceremony, and enforces dependency direction from the beginning. A later strict mode can move the same code toward stronger Clean Architecture boundaries without requiring a conceptual rewrite.
+Clubhouse is a focused fantasy-football showcase application. The first slice lets a user create an account or sign in, enter a fantasy dashboard, build a small squad, make a captain decision, submit the squad, and understand the resulting score. The repository is an application, not a reusable architecture kit or a framework template.
 
-The kit is designed for a single Next.js application repository. Next.js is a delivery mechanism, not the owner of the business rules. The architecture therefore keeps framework-specific code at the outer edge and makes meaningful backend modules and reusable frontend code portable.
+The architecture keeps the product simple while making responsibilities visible. Next.js owns delivery and request boundaries. Feature modules own product capabilities. Supabase is an infrastructure detail behind the authentication port. Shared code is kept small and is added only when it has a real cross-feature consumer.
 
-## The governing dependency rule
+## Current MVP scope
 
-> Dependencies point inward toward stable policy. Frameworks, transport protocols, databases, vendors, and UI delivery mechanisms are details at the edge.
+The current implementation begins with authentication and a responsive fantasy-football showcase. The fantasy data is intentionally local and deterministic at this stage; it does not depend on a live sports-data provider.
 
-The allowed direction is:
+| Area | Current responsibility | Current state |
+|---|---|---|
+| Authentication | Sign in, direct sign-up, cookie-backed Supabase session, and sign-out foundation | Implemented with Supabase Auth and PKCE configuration |
+| Route access | Protect `/dashboard` and redirect authenticated users away from `/` | Implemented in Next.js Proxy and the dashboard server page |
+| Fantasy experience | Demonstrate the squad-building and scoring journey | Implemented with local demo data and feature UI |
+| Persistence | Store fantasy teams and results for authenticated users | Planned; not part of the current authentication slice |
+| Live football data | Import real fixtures, player events, and gameweek statistics | Planned; not required for the first showcase slice |
 
-```text
-Next.js delivery -> frontend composition -> feature application/domain
-Next.js delivery -> backend transport -> feature application/domain
-feature infrastructure adapters -> feature ports/contracts
-shared technical adapters -> shared contracts
-```
+## Runtime request flow
 
-The forbidden direction is:
-
-```text
-domain/application -> next/*
-domain/application -> react-server or browser APIs
-domain/application -> ORM/database/vendor SDK
-backend -> frontend UI
-frontend -> backend infrastructure implementation
-feature A internals -> feature B internals
-```
-
-A dependency rule is enforced by imports, not by folder names. A file in a folder named `domain` that imports `next/headers` is still invalid.
-
-## Hybrid mode: the default layout
+The application uses the App Router. A request moves through the outer delivery boundary before it reaches a feature capability.
 
 ```text
-.
-├── src/
-│   ├── app/                         # Next.js App Router delivery only
-│   │   ├── (routes)/                # page/layout/loading/error compositions
-│   │   ├── api/                     # Route Handlers; HTTP translation only
-│   │   └── providers.tsx            # Next/React composition boundary
-│   │
-│   ├── modules/                    # Business capabilities, organized by feature
-│   │   └── <feature>/
-│   │       ├── frontend/            # React-oriented feature presentation
-│   │       │   ├── components/      # Framework-neutral React where possible
-│   │       │   ├── hooks/           # Client-side UI behavior
-│   │       │   └── view-models/     # Presentation mapping, no Next imports
-│   │       ├── backend/             # Server-side feature policy and adapters
-│   │       │   ├── domain/          # Entities, value objects, domain rules
-│   │       │   ├── application/     # Use cases and orchestration
-│   │       │   ├── ports/           # Inbound use-case and outbound contracts
-│   │       │   └── infrastructure/ # Concrete DB/provider/transport adapters
-│   │       └── contracts/           # Explicit frontend/backend DTOs and schemas
-│   │
-│   ├── shared/                     # Small, stable, genuinely cross-feature code
-│   │   ├── kernel/                 # Result, errors, IDs, dates, pure primitives
-│   │   ├── frontend/               # Reusable React-only UI primitives
-│   │   └── backend/                # Server-neutral backend utilities/contracts
-│   │
-│   └── adapters/                   # Framework and vendor composition adapters
-│       └── next/                   # Next-specific wrappers and runtime bridges
-│
-├── tests/
-│   ├── architecture/               # Dependency-boundary tests
-│   └── support/                    # Test-only builders and helpers
-├── scripts/                        # Repository maintenance and migration commands
-├── .github/workflows/              # CI policy
-└── config/                         # Tool configuration, not application policy
+Browser request
+      │
+      ▼
+Next.js Proxy
+  ├── refresh Supabase cookies when needed
+  ├── verify claims for route decisions
+  └── redirect / and /dashboard when the route policy requires it
+      │
+      ▼
+Next.js page, Server Action, or Server Component
+  ├── compose the required feature capability
+  └── use a request-scoped server client when cookies are involved
+      │
+      ▼
+Feature application/domain/ports
+      │
+      ▼
+Infrastructure adapter
+  └── Supabase or another external provider
 ```
 
-The exact feature name is illustrative. The kit should generate a minimal example feature only when it helps demonstrate the boundaries; it should not force users to keep example business code.
+The Proxy and a Server Action can both run for a matching request, but they have different responsibilities. Proxy handles an existing incoming session and request-level access. The authentication Server Action handles the submitted credentials and writes the new session cookies to the Server Action response. The two clients are therefore request-bound instances for different response boundaries, not duplicate login systems.
 
-## What belongs where
+## Source tree
 
-| Area | Responsibility | May import | Must not import |
-|---|---|---|---|
-| `src/app` | Next route/page entrypoints and composition | UI public APIs, application entrypoints, Next.js | feature internals, database clients, domain internals |
-| `modules/*/ui` | Optional React presentation and client interaction | feature contracts, shared frontend, browser-safe application facades | Next server APIs, infrastructure |
-| `modules/*/domain` | Optional business rules and domain models | shared kernel | Next.js, React, HTTP, database/vendor SDKs |
-| `modules/*/application` | Use-case orchestration | domain, ports, shared backend/kernel | Next.js, React, HTTP, concrete infrastructure |
-| `modules/*/ports` | Optional stable outbound contracts | domain types, shared kernel | frameworks and concrete providers |
-| `modules/*/infrastructure` | Optional concrete implementations | ports, vendors, database drivers | UI code and unrelated feature internals |
-| `modules/*/contracts` | Boundary DTOs and validation schemas | shared kernel, schema library | Next request/response types, infrastructure |
-| `adapters/next` | Next.js-specific bridges | Next.js and stable application APIs | domain implementation details |
-| `shared` | Small cross-feature primitives | standard library and approved neutral libraries | feature internals, Next.js unless explicitly in an adapter |
-
-## Public APIs between features
-
-A feature is not a namespace that permits unrestricted imports. Each feature exposes a deliberate public entrypoint, for example:
+The runtime application lives under `template/`. The root package contains pass-through commands that run the application from that directory.
 
 ```text
-src/modules/accounts/ui/index.ts
-src/modules/accounts/application/index.ts
-src/modules/accounts/ports/index.ts
-src/modules/accounts/contracts/index.ts
+template/
+└── src/
+    ├── app/                         # Next.js delivery boundary
+    │   ├── auth/actions.ts          # Authentication Server Action
+    │   ├── auth-guard.ts            # Request-level route policy implementation
+    │   ├── dashboard/page.tsx       # Protected server-rendered dashboard route
+    │   ├── page.tsx                 # Public root composition
+    │   ├── instrumentation.ts      # Node/Edge-aware instrumentation entry
+    │   └── instrumentation-node.ts # Fail-fast Node boot validation
+    │
+    ├── adapters/next/               # Next-specific composition doors
+    │   ├── composition/auth.ts      # Creates the server auth adapter
+    │   └── index.ts                 # Server-only public barrel
+    │
+    ├── modules/
+    │   ├── auth/
+    │   │   ├── contracts/           # Serializable action state and boundaries
+    │   │   ├── domain/               # Auth input schema and parser
+    │   │   ├── application/          # Auth form use case
+    │   │   ├── ports/                # Auth provider contract
+    │   │   ├── infrastructure/       # Supabase auth implementation
+    │   │   └── ui/                   # AuthEntry, AuthForm, and AuthStory
+    │   │
+    │   └── fantasy/
+    │       ├── domain/               # Fantasy rules and domain types
+    │       └── ui/                   # Dashboard presentation and demo data
+    │
+    └── shared/
+        ├── kernel/                   # Pure shared primitives and route constants
+        ├── frontend/                 # Browser-safe UI primitives and helpers
+        └── backend/                  # Server-only Supabase and environment helpers
 ```
 
-Consumers may import only from these public entrypoints. They may not import another feature's `domain`, `application`, `ports`, or `infrastructure` directories directly. This allows a feature to become a package or an adapter later without changing all consumers.
+## Responsibility boundaries
 
-Within the same feature, the default hybrid mode permits direct imports across the feature's internal folders only in the inward direction. The strict upgrade mode narrows this further to explicit ports and public APIs.
+| Location | Owns | Must not own |
+|---|---|---|
+| `src/app` | Pages, Server Actions, Proxy composition, redirects, and delivery concerns | Feature implementation details, raw provider wiring, or duplicated business rules |
+| `src/adapters/next` | Next.js-specific composition of application and infrastructure capabilities | UI presentation or domain policy |
+| `src/modules/auth/ui` | Form controls, React Hook Form state, accessibility, pending state, and action errors | Supabase client construction, cookie plumbing, or route policy |
+| `src/modules/auth/domain` | Auth input rules and shared parsing policy | Next.js, React, cookies, or Supabase |
+| `src/modules/auth/application` | Translating form input into a typed auth use case and serializable result | Next.js request APIs or concrete Supabase calls |
+| `src/modules/auth/ports` | The contract required by the auth application use case | Provider-specific implementation details |
+| `src/modules/auth/infrastructure` | The Supabase implementation of the auth port | React UI or route composition |
+| `src/modules/auth/contracts` | Serializable state and boundary types shared between the Server Action and UI | Cookies, provider SDKs, or Next.js request objects |
+| `src/modules/fantasy/domain` | Fantasy rules, player types, and scoring policy | UI state, request APIs, or provider clients |
+| `src/modules/fantasy/ui` | The fantasy dashboard presentation and local demo data | Authentication infrastructure or server-only modules |
+| `src/shared/frontend` | Reusable browser-safe UI primitives | Backend code and feature-specific policy |
+| `src/shared/backend` | Reusable server-side environment and Supabase helpers | UI presentation |
+| `src/shared/kernel` | Small pure values and utilities used by multiple layers | Framework, provider, or feature-specific code |
 
-## Inbound and outbound boundaries without dependency injection
+The rule is based on imports, not folder names. A file named `domain.ts` is not a domain module if it imports a database driver or a Next.js request API.
 
-The initial mode uses explicit functions and factory modules rather than a dependency-injection container. An inbound port is a use-case-facing function or interface invoked by a delivery adapter. An outbound port is an interface owned by the application/domain side and implemented by infrastructure.
+## Authentication architecture
 
-A simple composition root wires concrete implementations in one place:
+Clubhouse uses Supabase Auth as its only authentication provider. The form is implemented as a Client Component because it needs React Hook Form and `useActionState`. It directly imports the named Server Action from `src/app/auth/actions.ts`, which is the documented Next.js pattern for invoking a Server Action from a Client Component. The action is not passed through unrelated page or layout components.
 
 ```text
-src/adapters/next/composition/
-src/modules/<feature>/infrastructure/composition.ts
+AuthForm Client Component
+      │ directly invokes
+      ▼
+submitAuthFormAction Server Action
+      │ parses shared auth contract
+      ▼
+auth-form application use case
+      │ calls
+      ▼
+AuthClient port
+      │ implemented by
+      ▼
+Supabase auth infrastructure adapter
+      │ writes
+      ▼
+Supabase session cookies
 ```
 
-This keeps dependency injection out of ordinary feature code while preserving the essential direction of the dependency inversion principle. Strict mode may later introduce explicit factories or dependency injection only where the system proves it is useful.
+`AuthEntry` is a Server Component because it only composes the page structure, an uncontrolled Tabs primitive, the Client Component forms, and the server-rendered `AuthStory` child. The parent does not own authentication state. Form errors and pending state remain local to `AuthForm`, while successful authentication redirects from the Server Action.
 
-## Next.js boundaries
+The browser does not use a preview user or a local-storage authentication fallback. The session is managed through Supabase SSR cookies. The PKCE setting protects redirect-based authorization-code exchanges; the cookie adapter determines how the session is persisted and shared with the server.
 
-Next.js files remain in `src/app` and `src/adapters/next`. Route Handlers translate HTTP input into an inbound application call and translate the result back to HTTP. Server Actions perform the same role for server-invoked mutations. They must not contain domain rules or direct ORM calls.
+## Route protection
 
-React components that do not need Next.js should not import `next/link`, `next/image`, `next/navigation`, server-only modules, or request APIs. When a component does need those capabilities, the dependency must be visible at the Next adapter/composition edge rather than hidden inside a supposedly portable feature component.
+Route constants and the public/protected route policy live in `src/shared/kernel/routes.ts`. `src/proxy.ts` is intentionally a thin Next.js Proxy entrypoint. It delegates to `src/app/auth-guard.ts`, which creates the request-scoped Supabase client, refreshes cookies, verifies claims, and applies the route policy.
 
-### Mandatory server-only doors
+The dashboard route performs its own server-side claims/user check before rendering the fantasy dashboard. Proxy provides request-level routing behavior, while the server page provides defense in depth for the page’s protected data and rendering.
 
-The kit treats the following locations as server-only doors. The public barrel or delivery entrypoint at each door begins with `import "server-only";`; internal implementation files do not need to repeat the marker when the import rules force consumers through that barrel:
+## Environment validation
 
-| Location | Why it is server-only |
-|---|---|
-| `src/app/api/**` | Route Handlers receive and translate HTTP requests. |
-| `src/app/actions.ts` and future Server Action entrypoints | Server Actions execute on the server and call backend composition. |
-| `src/adapters/next/index.ts` and `src/adapters/next/**/index.ts` | Next-specific runtime bridges and composition roots wire server implementations. |
-| `src/modules/**/infrastructure/index.ts` | Concrete database, filesystem, queue, WebSocket, authentication, and vendor adapters belong outside portable policy. |
-| `src/shared/backend/index.ts` | Shared backend utilities may access server-only capabilities such as environment variables. |
-
-The public barrel is the only supported import surface for these backend areas. ESLint rejects consumers that import an infrastructure, Next adapter, or shared-backend implementation file directly. It also rejects UI code from importing backend areas at all. Therefore, a composition leaf such as `src/adapters/next/composition/example.ts` is intentionally unmarked: it is an internal implementation exported through `src/adapters/next/index.ts`, and the boundary rule prevents bypassing that door.
-
-The `server-only` check scans `src` and derives these public doors automatically; developers do not need to remember which individual files require the marker. New backend integrations should be exported deliberately from a protected barrel, or the kit’s boundary policy must be updated before adding a new server-specific area. Ordinary `src/app` pages and layouts are not blanket-marked because a server-rendered React component is not automatically a server-only implementation: it may render portable UI and can remain a delivery entrypoint. Any sensitive or runtime-specific logic imported by those pages must still come through a marked door.
-
-## Strict mode target
-
-The strict mode is not a second unrelated architecture. It is a more explicit representation of the same boundaries:
+Supabase configuration is mandatory. The single Zod schema lives in `src/shared/kernel/env-validation.ts` and validates:
 
 ```text
-src/
-├── delivery/next/                  # pages, route handlers, server actions
-├── modules/<feature>/
-│   ├── domain/
-│   ├── application/
-│   │   ├── inbound/
-│   │   └── outbound/
-│   ├── adapters/
-│   └── infrastructure/
-├── frontend/
-│   ├── features/<feature>/
-│   └── shared/
-└── shared/kernel/
+NEXT_PUBLIC_SUPABASE_URL
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
 ```
 
-The migration is safe because the hybrid layout already has the semantic distinctions. The CLI changes locations and rules, updates imports, writes a migration manifest, and reports files it cannot classify with confidence. Unknown files are never silently deleted or forced into a layer.
+The validator runs in two places using the same implementation:
 
-## Non-negotiable architectural policies
+1. The `prebuild` command validates the environment before `next build` begins.
+2. Node server boot loads `instrumentation-node.ts`, which exits with status `1` when configuration is invalid.
 
-The generated project uses one canonical convention. Users may add features, but they do not choose alternative boundary systems. Architectural exceptions must be explicit, named, documented, and narrowly scoped. A blanket ESLint disable for an entire directory is prohibited.
+The `NEXT_RUNTIME === "nodejs"` branch in `instrumentation.ts` keeps the Node-only boot validator out of the Edge runtime. Browser and server environment readers only read values that have already passed the centralized validation; they do not repeat scattered runtime guards.
 
-The validator must fail when application/domain code imports Next.js, React client-only APIs, a concrete database/provider package, or another feature's private files. It must also detect circular dependencies, orphaned files in governed areas, and imports that bypass a feature's public entrypoint.
+## Public imports
 
-The architecture is successful when a feature can be extracted by replacing its outer adapters and composition wiring, not by rewriting its business rules.
+Feature consumers use public barrels rather than private implementation paths.
 
-## Versioning principle
+```ts
+import { FantasyDashboard } from "@/modules/fantasy/ui";
+import { AuthEntry, AuthStory } from "@/modules/auth";
+```
 
-The template pins a tested dependency baseline and commits a lockfile. New dependency versions are introduced through deliberate kit releases and CI verification. Generated projects can update normally, but the kit never uses an unbounded `latest` range for every dependency and never silently rewrites a user's project.
+This is invalid outside the owning feature or its tightly scoped internal composition:
 
-## License
+```ts
+import { FantasyDashboard } from "@/modules/fantasy/ui/fantasy-dashboard";
+```
 
-The repository should use a permissive license suitable for reuse. MIT is the default recommendation unless the owner chooses otherwise before publication.
+The repository enforces this through explicit ESLint restrictions and dependency checks. TypeScript additionally fails when a requested symbol is not exported by the selected public barrel. The intended exception is the direct import of the named authentication Server Action from the Next.js app boundary:
+
+```ts
+import { submitAuthFormAction } from "@/app/auth/actions";
+```
+
+Feature UI may import that one action because Next.js Server Actions are designed to be imported into Client Components. It may not import arbitrary pages, layouts, Route Handlers, app utilities, Next composition adapters, or shared backend implementations.
+
+Server-only areas are exposed through protected barrels where applicable. Consumers should not bypass `src/adapters/next/index.ts`, `src/shared/backend/index.ts`, or a feature infrastructure barrel to reach private implementation files.
+
+## Development checks
+
+Run the application from the repository root:
+
+```bash
+npm run dev
+```
+
+Run the full gate with safe or real Supabase environment values:
+
+```bash
+NODE_ENV=test \
+NEXT_PUBLIC_SUPABASE_URL=https://example.supabase.co \
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=sb_publishable_test \
+npm run validate
+```
+
+The validation gate checks the supported runtime, formatting, ESLint and SonarJS rules, TypeScript, dependency direction, server-only doors, public imports, staged secrets, environment configuration, and the production build.
+
+## Architectural principles
+
+The project follows a few practical rules:
+
+- Keep the current user journey small and understandable.
+- Add a layer only when that layer owns a real responsibility.
+- Keep provider and framework details at the outer edge.
+- Validate untrusted form input at the Server Action boundary with the shared schema.
+- Keep UI state in the UI and route access in Proxy/server delivery code.
+- Prefer a direct, explicit composition over wrappers that only forward props.
+- Use public barrels for cross-boundary imports and let TypeScript verify the exported API.
+- Do not add persistence, live sports data, queues, or other infrastructure until the product slice needs them.

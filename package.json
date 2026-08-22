@@ -1,8 +1,7 @@
 {
-  "name": "next-architecture-kit",
+  "name": "clubhouse-fantasy-mvp",
   "version": "0.1.0",
-  "description": "A pragmatic feature-based and Clean Architecture starter for Next.js App Router projects.",
-  "license": "MIT",
+  "description": "Clubhouse fantasy-football showcase application.",
   "type": "module",
   "bin": {
     "next-architecture": "./dist/cli/index.js"
